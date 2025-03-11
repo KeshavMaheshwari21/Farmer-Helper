@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer Helper</title>
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+
+<body class="light">
+    <nav>
+        <a href="/" style="text-decoration: none; color: inherit;">
+            <h1 data-en="Farmer Helper" data-hi="किसान सहायक">Farmer Helper</h1>
+        </a>
+        <div class="nav-buttons">
+            <button id="themeToggle">🌞</button>
+            <button id="languageToggle">EN</button>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-content">
+            <h1 data-en="Smart Farming Solutions" data-hi="स्मार्ट कृषि समाधान">Smart Farming Solutions</h1>
+            <p data-en="Empowering farmers with technology and data-driven insights"
+                data-hi="प्रौद्योगिकी और डेटा-संचालित अंतर्दृष्टि के साथ किसानों को सशक्त बनाना">Empowering farmers with
+                technology and data-driven insights</p>
+        </div>
+    </header>
+
+    <main>
+        <div class="section-title">
+            <h2 data-en="Our Services" data-hi="हमारी सेवाएं">Our Services</h2>
+            <div class="title-underline"></div>
+        </div>
+
+        <div class="cards-container">
+            <div class="card"
+                style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('static/photo1.jpg')">
+                <div class="card-content">
+                    <div class="card-icon">📈</div>
+                    <h2 data-en="Crop Price Prediction" data-hi="फसल मूल्य भविष्यवाणी">Crop Price Prediction</h2>
+                    <p data-en="Predict crop prices based on market trends and historical data"
+                        data-hi="बाज़ार के रुझान और ऐतिहासिक डेटा के आधार पर फसल की कीमतों की भविष्यवाणी करें">Predict
+                        crop prices based on market trends and historical data</p>
+                    <button class="card-button" data-en="Predict Now" data-hi="अभी जानें"
+                        onclick="location.href='/crop_price_predict';">
+                        Get Prediction
+                    </button>
+                </div>
+            </div>
+
+            <div class="card"
+                style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=1000&auto=format')">
+                <div class="card-content">
+                    <div class="card-icon">🌱</div>
+                    <h2 data-en="Crop Recommendation" data-hi="फसल की सिफारिश">Crop Recommendation</h2>
+                    <p data-en="Get personalized crop recommendations based on soil and climate"
+                        data-hi="मिट्टी और जलवायु के आधार पर व्यक्तिगत फसल की सिफारिशें प्राप्त करें">Get personalized
+                        crop recommendations based on soil and climate</p>
+                    <button class="card-button" data-en="Get Recommendations" data-hi="सिफारिशें प्राप्त करें">Get
+                        Recommendations</button>
+                </div>
+            </div>
+
+            <div class="card"
+                style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?q=80&w=1000&auto=format')">
+                <div class="card-content">
+                    <div class="card-icon">🔍</div>
+                    <h2 data-en="Plant Disease Detection" data-hi="पौधों की बीमारी की पहचान">Plant Disease Detection
+                    </h2>
+                    <p data-en="Identify plant diseases using image recognition technology"
+                        data-hi="छवि पहचान तकनीक का उपयोग करके पौधों की बीमारियों की पहचान करें">Identify plant diseases
+                        using image recognition technology</p>
+                    <button class="card-button" data-en="Detect Disease" data-hi="बीमारी का पता लगाएं">Detect
+                        Disease</button>
+                </div>
+            </div>
+
+            <div class="card"
+                style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?q=80&w=1000&auto=format')">
+                <div class="card-content">
+                    <div class="card-icon">🌤️</div>
+                    <h2 data-en="Weather Forecast" data-hi="मौसम का पूर्वानुमान">Weather Forecast</h2>
+                    <p data-en="Get accurate weather predictions for better crop planning"
+                        data-hi="बेहतर फसल योजना के लिए सटीक मौसम की भविष्यवाणी प्राप्त करें">Get accurate weather
+                        predictions for better crop planning</p>
+                    <button class="card-button" data-en="Check Weather" data-hi="मौसम जानें">Check Weather</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="chatbot-container">
+        <div class="chatbot-icon" id="chatbotIcon">
+            <img src="static/chatbot.png" alt="AI Assistant">
+        </div>
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <h3 data-en="AI Farm Assistant" data-hi="एआई कृषि सहायक">AI Farm Assistant</h3>
+                <button class="close-chat" id="closeChat">×</button>
+            </div>
+            <div class="chat-messages">
+                <div class="message bot">
+                    <p data-en="Hello! How can I help you with farming today?"
+                        data-hi="नमस्ते! आज मैं आपकी कृषि में कैसे मदद कर सकता हूं?">Hello! How can I help you with
+                        farming today?</p>
+                </div>
+            </div>
+            <div class="chat-input">
+                <input type="text" placeholder="Type your message..." id="messageInput">
+                <button id="sendMessage">➤</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p data-en="© 2024 Farmer Helper. All rights reserved." data-hi="© 2024 किसान सहायक. सर्वाधिकार सुरक्षित।">©
+            2024 Farmer Helper. All rights reserved.</p>
+    </footer>
+
+    <script src="static/script.js"></script>
+</body>
+
+</html>
