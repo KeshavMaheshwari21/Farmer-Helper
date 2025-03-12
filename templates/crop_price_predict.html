@@ -1,218 +1,284 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Commodity Price Prediction</title>
-    <link rel="stylesheet" href="static/styles.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <style>
-        .form-section {
-            max-width: 500px;
-            margin: auto;
-            padding: 20px;
-            background: #f9f9f9;
-            border-radius: 10px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Commodity Price Prediction</title>
+  <link rel="stylesheet" href="static/style.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    .form-section {
+      max-width: 500px;
+      margin: auto;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    }
 
-        .form-section h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+    .form-section h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
 
-        form {
-            display: flex;
-            flex-direction: column;
-        }
+    form {
+      display: flex;
+      flex-direction: column;
+    }
 
-        label {
-            margin-top: 10px;
-            font-weight: bold;
-            color: #2c3e50;
-        }
+    label {
+      margin-top: 10px;
+      font-weight: bold;
+    }
 
-        select {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 14px;
-        }
+    select {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+    }
 
-        /* Centered and larger result */
-        .result-container {
-            text-align: center;
-            margin-top: 20px;
-        }
+    /* Centered and larger result */
+    .result-container {
+      text-align: center;
+      margin-top: 20px;
+    }
 
-        #result {
-            display: none;
-            font-size: 24px;
-            font-weight: bold;
-            color: #d35400;
-            background: #fef5e7;
-            padding: 10px;
-            border-radius: 8px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-            width: fit-content;
-            margin: auto;
-        }
+    #result {
+      display: none;
+      font-size: 24px;
+      font-weight: bold;
+      color: #d35400;
+      background: #fef5e7;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+      width: fit-content;
+      margin: auto;
+    }
 
-        .form-section button[type="submit"] {
-            margin-top: 20px;
-            padding: 10px;
-            background: #28a745;
-            color: white;
-            font-size: 16px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+    .form-section button[type="submit"] {
+      margin-top: 20px;
+      padding: 10px;
+      background: #28a745;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
 
-        .form-section button[type="submit"]:hover {
-            background: #218838;
-        }
-    </style>
+    .form-section button[type="submit"]:hover {
+      background: #218838;
+    }
+
+    .hero-image img {
+      width: 100%;
+      max-width: 600px;
+      border-radius: 10px;
+      transition: transform 0.5s ease, box-shadow 0.5s ease;
+    }
+
+    .hero-image img:hover {
+      transform: rotate(5deg) scale(1.1);
+      box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+    }
+  </style>
 </head>
+
 <body class="light">
-    <nav>
-        <a href="/" style="text-decoration: none; color: inherit;">
-            <h1 data-en="Farmer Helper" data-hi="किसान सहायक">Farmer Helper</h1>
-        </a>
-        <div class="nav-buttons">
-            <button id="themeToggle">🌞</button>
-            <button id="languageToggle">EN</button>
+  <nav>
+    <div class="logo">KrishiGuide</div>
+    <div class="nav-links">
+      <a href="{{ url_for('index') }}" class="active">Home</a>
+      <a href="#features">Features</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+      <button id="langToggle">EN</button>
+      <button id="themeToggle"><i class="fas fa-moon"></i></button>
+      <button class="get-started">Get Started</button>
+    </div>
+  </nav>
+
+  <main>
+    <section id="home" class="hero">
+      <div class="hero-content">
+        <span class="tag">AI-Powered Farming</span>
+        <h1 class="title" data-en="Crop Price
+        Prediction" data-hi="फसल मूल्य पूर्वानुमान">Crop Price
+          Prediction</h1>
+        <p class="subtitle"
+          data-en="Make data-driven decisions with AI-powered tools designed specifically for farmers. Increase yields, predict prices, and protect your crops."
+          data-hi="किसानों के लिए विशेष रूप से डिज़ाइन किए गए AI-संचालित टूल्स के साथ डेटा-आधारित निर्णय लें। उपज बढ़ाएं, कीमतों की भविष्यवाणी करें और अपनी फसलों की रक्षा करें।">
+          Make data-driven decisions with AI-powered tools designed specifically for farmers. Increase yields, predict
+          prices, and protect your crops.</p>
+
+
+      </div>
+      <div class="hero-image">
+        <img src="static/photo1.jpg" alt="Farmer using technology">
+      </div>
+    </section>
+
+    <div class="container" style="margin-top: 35px;">
+      <div class="form-section">
+        <h2 data-en="Get Price Prediction" data-hi="मूल्य भविष्यवाणी प्राप्त करें">Get Price
+          Prediction</h2>
+        <form id="predictionForm">
+          <label data-en="Select State:" data-hi="राज्य चुनें:">Select State:</label>
+          <select id="state" name="state">
+            <option value="">-- Select State --</option>
+            {% for state in states %}
+            <option value="{{ state }}">{{ state }}</option>
+            {% endfor %}
+          </select>
+
+          <label data-en="Select District:" data-hi="जिला चुनें:">Select District:</label>
+          <select id="district" name="district" disabled>
+            <option value="">-- Select District --</option>
+          </select>
+
+          <label data-en="Select Market:" data-hi="बाजार चुनें:">Select Market:</label>
+          <select id="market" name="market" disabled>
+            <option value="">-- Select Market --</option>
+          </select>
+
+          <label data-en="Select Commodity:" data-hi="वस्तु चुनें:">Select Commodity:</label>
+          <select id="commodity" name="commodity" disabled>
+            <option value="">-- Select Commodity --</option>
+          </select>
+
+          <label data-en="Select Variety:" data-hi="प्रकार चुनें:">Select Variety:</label>
+          <select id="variety" name="variety" disabled>
+            <option value="">-- Select Variety --</option>
+          </select>
+
+          <label data-en="Select Grade:" data-hi="ग्रेड चुनें:">Select Grade:</label>
+          <select id="grade" name="grade" disabled>
+            <option value="">-- Select Grade --</option>
+          </select>
+
+          <button type="submit">Submit</button>
+        </form>
+        <div class="result-container">
+          <div id="result"></div>
         </div>
-    </nav>
+      </div>
+    </div>
+  </main>
 
-    <header class="hero">
-        <div class="hero-content">
-            <h1 data-en="Commodity Price Prediction" data-hi="कमोडिटी मूल्य भविष्यवाणी">Commodity Price Prediction</h1>
-            <p data-en="Predict the prices of commodities based on market trends" data-hi="बाज़ार प्रवृत्तियों के आधार पर वस्तुओं की कीमतों की भविष्यवाणी करें">
-                Predict the prices of commodities based on market trends
-            </p>
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>KrishiGuide</h3>
+        <p data-en="Smart farming solutions powered by AI" data-hi="AI द्वारा संचालित स्मार्ट कृषि समाधान">Smart farming
+          solutions powered by AI</p>
+      </div>
+      <div class="footer-section">
+        <h3 data-hi="
+          त्वरित सम्पक" data-en="Quick Links">Quick Links</h3>
+        <a href="{{ url_for('index') }}" data-en="Home" data-hi="होम">Home</a>
+        <a href="#features" data-en="Features" data-hi="सुविधाएं">Features</a>
+        <a href="#about" data-en="About" data-hi="हमारे बारे में">About</a>
+        <a href="#contact" data-en="Contact" data-hi="संपर्क करें">Contact</a>
+      </div>
+      <div class="footer-section">
+        <h3 data-en="Features" data-hi="सुविधाएं">Features</h3>
+        <a href="/crop_recommendation" data-en="Crop Suggestion" data-hi="फसल सुझाव
+          ">Crop Suggestion</a>
+        <a href="/crop_price_predict" data-en="Price Prediction" data-hi="मूल्य भविष्यवाणी
+          ">Price Prediction</a>
+        <a href="#features" data-en="Disease Detection" data-hi="रोग का पता लगाना
+          ">Disease Detection</a>
+        <a href="#features" data-en="Weather Forecast" data-hi="मौसम पूर्वानुमान
+          ">Weather Forecast</a>
+      </div>
+      <div class="footer-section">
+        <h3 data-en="Contact" data-hi="संपर्क करें">Contact</h3>
+        <p>info@krishiguide.com</p>
+        <p>+91 98765 43210</p>
+        <div class="social-links">
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-linkedin"></i></a>
         </div>
-    </header>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p data-en="&copy; 2025 KrishiGuide. All rights reserved." data-hi="&copy; 
+        2025 कृषिगाइड। सभी अधिकार सुरक्षित।">&copy; 2025 KrishiGuide. All rights reserved.</p>
+    </div>
+  </footer>
 
-    <main>
-        <div class="container" style="margin-top: 35px;">
-            <div class="form-section">
-                <h2 data-en="Get Price Prediction" data-hi="मूल्य भविष्यवाणी प्राप्त करें" style="color: #2c3e50;">Get Price Prediction</h2>
-                <form id="predictionForm">
-                    <label data-en="Select State:" data-hi="राज्य चुनें:">Select State:</label>
-                    <select id="state" name="state">
-                        <option value="">-- Select State --</option>
-                        {% for state in states %}
-                        <option value="{{ state }}">{{ state }}</option>
-                        {% endfor %}
-                    </select>
+  <script src="static/script.js"></script>
+  <script>
+    $(document).ready(function () {
+      // Language toggle logic
+      $("#languageToggle").click(function () {
+        var isEnglish = $(this).text() === "EN";
+        $(this).text(isEnglish ? "हिं" : "EN");
 
-                    <label data-en="Select District:" data-hi="जिला चुनें:">Select District:</label>
-                    <select id="district" name="district" disabled>
-                        <option value="">-- Select District --</option>
-                    </select>
-
-                    <label data-en="Select Market:" data-hi="बाजार चुनें:">Select Market:</label>
-                    <select id="market" name="market" disabled>
-                        <option value="">-- Select Market --</option>
-                    </select>
-
-                    <label data-en="Select Commodity:" data-hi="वस्तु चुनें:">Select Commodity:</label>
-                    <select id="commodity" name="commodity" disabled>
-                        <option value="">-- Select Commodity --</option>
-                    </select>
-
-                    <label data-en="Select Variety:" data-hi="प्रकार चुनें:">Select Variety:</label>
-                    <select id="variety" name="variety" disabled>
-                        <option value="">-- Select Variety --</option>
-                    </select>
-
-                    <label data-en="Select Grade:" data-hi="ग्रेड चुनें:">Select Grade:</label>
-                    <select id="grade" name="grade" disabled>
-                        <option value="">-- Select Grade --</option>
-                    </select>
-
-                    <button type="submit">Submit</button>
-                </form>
-                <div class="result-container">
-                    <div id="result"></div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <footer>
-        <p data-en="© 2024 Farmer Helper. All rights reserved." data-hi="© 2024 किसान सहायक. सर्वाधिकार सुरक्षित।">
-            © 2024 Farmer Helper. All rights reserved.
-        </p>
-    </footer>
-
-    <script src="static/script.js"></script>
-    <script>
-        $(document).ready(function() {
-            // Language toggle logic
-            $("#languageToggle").click(function() {
-                var isEnglish = $(this).text() === "EN";
-                $(this).text(isEnglish ? "हिं" : "EN");
-
-                $("[data-en]").each(function() {
-                    var text = isEnglish ? $(this).attr("data-hi") : $(this).attr("data-en");
-                    $(this).text(text);
-                });
-            });
-
-            // Fetch data dynamically
-            $("#state").change(function() {
-                var state = $(this).val();
-                if (state) {
-                    $.ajax({
-                        url: "/get_options",
-                        type: "POST",
-                        contentType: "application/json",
-                        data: JSON.stringify({ state: state }),
-                        success: function(response) {
-                            updateDropdown("#district", response.districts);
-                            updateDropdown("#market", response.markets);
-                            updateDropdown("#commodity", response.commodities);
-                            updateDropdown("#variety", response.varieties);
-                            updateDropdown("#grade", response.grades);
-                        }
-                    });
-                } else {
-                    resetDropdown("#district");
-                    resetDropdown("#market");
-                    resetDropdown("#commodity");
-                    resetDropdown("#variety");
-                    resetDropdown("#grade");
-                }
-            });
-
-            function updateDropdown(selector, options) {
-                var dropdown = $(selector);
-                dropdown.empty().append('<option value="">-- Select --</option>');
-                options.forEach(function(option) {
-                    dropdown.append(new Option(option, option));
-                });
-                dropdown.prop("disabled", false);
-            }
-
-            function resetDropdown(selector) {
-                $(selector).empty().append('<option value="">-- Select --</option>').prop("disabled", true);
-            }
-
-            // Handle form submission
-            $("#predictionForm").submit(function(event) {
-                event.preventDefault();
-                $.ajax({
-                    url: "/predict",
-                    type: "POST",
-                    data: $(this).serialize(),
-                    success: function(response) {
-                        $("#result").text(response.predicted_price).fadeIn();
-                    }
-                });
-            });
+        $("[data-en]").each(function () {
+          var text = isEnglish ? $(this).attr("data-hi") : $(this).attr("data-en");
+          $(this).text(text);
         });
-    </script>
+      });
+
+      // Fetch data dynamically
+      $("#state").change(function () {
+        var state = $(this).val();
+        if (state) {
+          $.ajax({
+            url: "/get_options",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({ state: state }),
+            success: function (response) {
+              updateDropdown("#district", response.districts);
+              updateDropdown("#market", response.markets);
+              updateDropdown("#commodity", response.commodities);
+              updateDropdown("#variety", response.varieties);
+              updateDropdown("#grade", response.grades);
+            }
+          });
+        } else {
+          resetDropdown("#district");
+          resetDropdown("#market");
+          resetDropdown("#commodity");
+          resetDropdown("#variety");
+          resetDropdown("#grade");
+        }
+      });
+
+      function updateDropdown(selector, options) {
+        var dropdown = $(selector);
+        dropdown.empty().append('<option value="">-- Select --</option>');
+        options.forEach(function (option) {
+          dropdown.append(new Option(option, option));
+        });
+        dropdown.prop("disabled", false);
+      }
+
+      function resetDropdown(selector) {
+        $(selector).empty().append('<option value="">-- Select --</option>').prop("disabled", true);
+      }
+
+      // Handle form submission
+      $("#predictionForm").submit(function (event) {
+        event.preventDefault();
+        $.ajax({
+          url: "/predict",
+          type: "POST",
+          data: $(this).serialize(),
+          success: function (response) {
+            $("#result").text(response.predicted_price).fadeIn();
+          }
+        });
+      });
+    });
+  </script>
 </body>
+
 </html>

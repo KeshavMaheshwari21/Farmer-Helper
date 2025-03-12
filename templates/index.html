@@ -2,124 +2,346 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Farmer Helper</title>
-    <link rel="stylesheet" href="static/styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KrishiGuide - Smart Farming Solutions</title>
+  <link rel="stylesheet" href="static/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
+<style>
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .feature-card {
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, text-shadow 0.3s ease;
+    box-shadow: 0 4px 6px var(--card-shadow);
+    position: relative;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-10px) scale(1.05) rotate(2deg);
+    box-shadow: 0 8px 16px var(--card-hover-shadow);
+  }
+
+  .feature-card:hover h3,
+  .feature-card:hover p {
+    text-shadow: 2px 2px 8px var(--card-hover-shadow);
+    transform: scale(1.1);
+  }
+
+  .feature-card i {
+    font-size: 40px;
+    margin-bottom: 10px;
+    transition: color 0.3s ease, transform 0.3s ease;
+  }
+
+  .feature-card:hover i {
+    transform: scale(1.2);
+  }
+
+  .feature-card h3 {
+    font-size: 20px;
+    margin: 10px 0;
+    transition: transform 0.3s ease, text-shadow 0.3s ease;
+  }
+
+  .feature-card p {
+    font-size: 14px;
+    color: var(--text-color);
+    transition: transform 0.3s ease, text-shadow 0.3s ease;
+  }
+
+  .feature-card:hover::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    animation: cursorEffect 0.3s ease;
+  }
+
+  @keyframes cursorEffect {
+    0% {
+      transform: scale(0.5);
+      opacity: 0.8;
+    }
+
+    100% {
+      transform: scale(1.5);
+      opacity: 0;
+    }
+  }
+
+  .hero-image img {
+    width: 100%;
+    max-width: 600px;
+    border-radius: 10px;
+    transition: transform 0.5s ease, box-shadow 0.5s ease;
+  }
+
+  .hero-image img:hover {
+    transform: rotate(5deg) scale(1.1);
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+  }
+
+  .about-image img {
+    width: 100%;
+    max-width: 600px;
+    border-radius: 10px;
+    transition: transform 0.5s ease, box-shadow 0.5s ease;
+  }
+
+  .about-image img:hover {
+    transform: rotate(5deg) scale(1.1);
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+  }
+
+  .contact-image img {
+    width: 100%;
+    max-width: 600px;
+    border-radius: 10px;
+    transition: transform 0.5s ease, box-shadow 0.5s ease;
+  }
+
+  .contact-image img:hover {
+    transform: rotate(5deg) scale(1.1);
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+  }
+  .feature-card a {
+    color: inherit; /* Inherits the color from the parent element */
+    text-decoration: none; /* Removes underline */
+}
+
+.feature-card a:hover {
+    color: #009632; /* Changes color on hover */
+}
+</style>
 
 <body class="light">
-    <nav>
-        <a href="/" style="text-decoration: none; color: inherit;">
-            <h1 data-en="Farmer Helper" data-hi="किसान सहायक">Farmer Helper</h1>
-        </a>
-        <div class="nav-buttons">
-            <button id="themeToggle">🌞</button>
-            <button id="languageToggle">EN</button>
-        </div>
-    </nav>
-
-    <header class="hero">
-        <div class="hero-content">
-            <h1 data-en="Smart Farming Solutions" data-hi="स्मार्ट कृषि समाधान">Smart Farming Solutions</h1>
-            <p data-en="Empowering farmers with technology and data-driven insights"
-                data-hi="प्रौद्योगिकी और डेटा-संचालित अंतर्दृष्टि के साथ किसानों को सशक्त बनाना">Empowering farmers with
-                technology and data-driven insights</p>
-        </div>
-    </header>
-
-    <main>
-        <div class="section-title">
-            <h2 data-en="Our Services" data-hi="हमारी सेवाएं">Our Services</h2>
-            <div class="title-underline"></div>
-        </div>
-
-        <div class="cards-container">
-            <div class="card"
-                style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('static/photo1.jpg')">
-                <div class="card-content">
-                    <div class="card-icon">📈</div>
-                    <h2 data-en="Crop Price Prediction" data-hi="फसल मूल्य भविष्यवाणी">Crop Price Prediction</h2>
-                    <p data-en="Predict crop prices based on market trends and historical data"
-                        data-hi="बाज़ार के रुझान और ऐतिहासिक डेटा के आधार पर फसल की कीमतों की भविष्यवाणी करें">Predict
-                        crop prices based on market trends and historical data</p>
-                    <button class="card-button" data-en="Predict Now" data-hi="अभी जानें"
-                        onclick="location.href='/crop_price_predict';">
-                        Get Prediction
-                    </button>
-                </div>
-            </div>
-
-            <div class="card"
-                style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=1000&auto=format')">
-                <div class="card-content">
-                    <div class="card-icon">🌱</div>
-                    <h2 data-en="Crop Recommendation" data-hi="फसल की सिफारिश">Crop Recommendation</h2>
-                    <p data-en="Get personalized crop recommendations based on soil and climate"
-                        data-hi="मिट्टी और जलवायु के आधार पर व्यक्तिगत फसल की सिफारिशें प्राप्त करें">Get personalized
-                        crop recommendations based on soil and climate</p>
-                    <button class="card-button" data-en="Get Recommendations" data-hi="सिफारिशें प्राप्त करें">Get
-                        Recommendations</button>
-                </div>
-            </div>
-
-            <div class="card"
-                style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?q=80&w=1000&auto=format')">
-                <div class="card-content">
-                    <div class="card-icon">🔍</div>
-                    <h2 data-en="Plant Disease Detection" data-hi="पौधों की बीमारी की पहचान">Plant Disease Detection
-                    </h2>
-                    <p data-en="Identify plant diseases using image recognition technology"
-                        data-hi="छवि पहचान तकनीक का उपयोग करके पौधों की बीमारियों की पहचान करें">Identify plant diseases
-                        using image recognition technology</p>
-                    <button class="card-button" data-en="Detect Disease" data-hi="बीमारी का पता लगाएं">Detect
-                        Disease</button>
-                </div>
-            </div>
-
-            <div class="card"
-                style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?q=80&w=1000&auto=format')">
-                <div class="card-content">
-                    <div class="card-icon">🌤️</div>
-                    <h2 data-en="Weather Forecast" data-hi="मौसम का पूर्वानुमान">Weather Forecast</h2>
-                    <p data-en="Get accurate weather predictions for better crop planning"
-                        data-hi="बेहतर फसल योजना के लिए सटीक मौसम की भविष्यवाणी प्राप्त करें">Get accurate weather
-                        predictions for better crop planning</p>
-                    <button class="card-button" data-en="Check Weather" data-hi="मौसम जानें">Check Weather</button>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <div class="chatbot-container">
-        <div class="chatbot-icon" id="chatbotIcon">
-            <img src="static/chatbot.png" alt="AI Assistant">
-        </div>
-        <div class="chat-window" id="chatWindow">
-            <div class="chat-header">
-                <h3 data-en="AI Farm Assistant" data-hi="एआई कृषि सहायक">AI Farm Assistant</h3>
-                <button class="close-chat" id="closeChat">×</button>
-            </div>
-            <div class="chat-messages">
-                <div class="message bot">
-                    <p data-en="Hello! How can I help you with farming today?"
-                        data-hi="नमस्ते! आज मैं आपकी कृषि में कैसे मदद कर सकता हूं?">Hello! How can I help you with
-                        farming today?</p>
-                </div>
-            </div>
-            <div class="chat-input">
-                <input type="text" placeholder="Type your message..." id="messageInput">
-                <button id="sendMessage">➤</button>
-            </div>
-        </div>
+  <nav>
+    <div class="logo">KrishiGuide</div>
+    <div class="nav-links">
+      <a href="#home" class="active">Home</a>
+      <a href="#features">Features</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+      <button id="langToggle">EN</button>
+      <button id="themeToggle"><i class="fas fa-moon"></i></button>
+      <button class="get-started">Get Started</button>
     </div>
+  </nav>
 
-    <footer>
-        <p data-en="© 2024 Farmer Helper. All rights reserved." data-hi="© 2024 किसान सहायक. सर्वाधिकार सुरक्षित।">©
-            2024 Farmer Helper. All rights reserved.</p>
-    </footer>
+  <main>
+    <section id="home" class="hero">
+      <div class="hero-content">
+        <span class="tag">AI-Powered Farming</span>
+        <h1 class="title" data-en="Smart Farming for Better Yields" data-hi="बेहतर उपज के लिए स्मार्ट खेती">Smart
+          Farming for Better Yields</h1>
+        <p class="subtitle"
+          data-en="Make data-driven decisions with AI-powered tools designed specifically for farmers. Increase yields, predict prices, and protect your crops."
+          data-hi="किसानों के लिए विशेष रूप से डिज़ाइन किए गए AI-संचालित टूल्स के साथ डेटा-आधारित निर्णय लें। उपज बढ़ाएं, कीमतों की भविष्यवाणी करें और अपनी फसलों की रक्षा करें।">
+          Make data-driven decisions with AI-powered tools designed specifically for farmers. Increase yields, predict
+          prices, and protect your crops.</p>
+        <div class="cta-buttons">
+          <button class="get-started">Get Started</button>
+          <button class="learn-more" onclick="window.location.href='#about';">Learn More</button>
+        </div>
+        <div class="stats">
+          <span class="highlight">10,000+</span> farmers already using our tools
+        </div>
+      </div>
+      <div class="hero-image">
+        <img
+          src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+          alt="Farmer using technology">
+      </div>
+    </section>
 
-    <script src="static/script.js"></script>
+    <section id="features" class="features" style="border-radius: 20px;">
+      <h2 class="section-title" data-en="Intelligent Tools for Modern Farmers"
+        data-hi="आधुनिक किसानों के लिए बुद्धिमान उपकरण">Intelligent Tools for Modern Farmers</h2>
+      <p class="section-subtitle"
+        data-en="Our AI-powered tools help you make informed decisions at every step of your farming journey"
+        data-hi="हमारे AI-संचालित टूल आपकी खेती यात्रा के हर कदम पर सूचित निर्णय लेने में मदद करते हैं">Our AI-powered
+        tools help you make informed decisions at every step of your farming journey</p>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <i class="fas fa-seedling"></i>
+          <a href="/crop_recommendation"><h3 data-en="Crop Suggestion" data-hi="फसल सुझाव">Crop Suggestion</h3></a>
+          <p data-en="Get AI-powered recommendations on which crops to plant based on your soil, climate, and market conditions"
+            data-hi="अपनी मिट्टी, जलवायु और बाज़ार की स्थितियों के आधार पर कौन सी फ़सलें लगानी चाहिए, इस पर AI-संचालित सुझाव प्राप्त करें">
+            Get AI-powered recommendations on which crops to plant based on your soil, climate, and market conditions
+          </p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-chart-line"></i>
+          <a href="/crop_price_predict"><h3 data-en="Price Prediction" data-hi="मूल्य भविष्यवाणी">Price Prediction</h3></a>
+          <p data-en="Forecast future crop prices using machine learning models that analyze market trends and demand patterns"
+            data-hi="मशीन लर्निंग मॉडल का उपयोग करके भविष्य की फसल की कीमतों का पूर्वानुमान करें जो बाजार के रुझान और मांग पैटर्न का विश्लेषण करते हैं">
+            Forecast future crop prices using machine learning models that analyze market trends and demand patterns
+          </p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-bug"></i>
+          <h3 data-hi="रोग का पता लगाना" data-en="Disease Detection">Disease Detection</h3>
+          <p data-en="Identify plant diseases early by uploading photos of your crops for instant AI-powered diagnosis"
+            data-hi="
+          तत्काल AI-संचालित निदान के लिए अपनी फसलों की तस्वीरें अपलोड करके पौधों की बीमारियों की प्रारंभिक पहचान करें">
+            Identify plant diseases early by uploading photos of your crops for instant AI-powered diagnosis</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-cloud-sun"></i>
+          <h3 data-en="Weather Forecast" data-hi="मौसम पूर्वानुमान
+          ">Weather Forecast</h3>
+          <p data-en="Get accurate weather predictions specifically tailored for your farm's location to plan your activities"
+            data-hi="
+          अपनी गतिविधियों की योजना बनाने के लिए अपने खेत के स्थान के लिए विशेष रूप से तैयार सटीक मौसम पूर्वानुमान प्राप्त करें">
+            Get accurate weather predictions specifically tailored for your farm's location to plan your activities</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="about">
+      <div class="about-content">
+        <h2 class="section-title" data-en="Powered by Artificial Intelligence" data-hi="एआई द्वारा संचालित">Powered by
+          Artificial Intelligence</h2>
+        <p class="section-subtitle" data-en="Leveraging cutting-edge technology for smarter farming"
+          data-hi="स्मार्ट खेती के लिए अत्याधुनिक तकनीक का उपयोग">Leveraging cutting-edge technology for smarter farming
+        </p>
+
+        <div class="about-grid">
+          <div class="about-text">
+            <div class="about-feature">
+              <i class="fas fa-brain"></i>
+              <p data-en="Our machine learning algorithms analyze historical data, weather patterns, and market trends to provide accurate price predictions for your crops."
+                data-hi="हमारे मशीन लर्निंग एल्गोरिदम ऐतिहासिक डेटा, मौसम पैटर्न और बाजार के रुझानों का विश्लेषण करके आपकी फसलों के लिए सटीक मूल्य भविष्यवाणी प्रदान करते हैं।">
+                Our machine learning algorithms analyze historical data, weather patterns, and market trends to provide
+                accurate price predictions for your crops.</p>
+            </div>
+            <div class="about-feature">
+              <i class="fas fa-microscope"></i>
+              <p data-en="Advanced computer vision and deep learning models help detect plant diseases with over 95% accuracy."
+                data-hi="उन्नत कंप्यूटर विजन और डीप लर्निंग मॉडल 95% से अधिक सटीकता के साथ पौधों की बीमारियों का पता लगाने में मदद करते हैं।">
+                Advanced computer vision and deep learning models help detect plant diseases with over 95% accuracy.</p>
+            </div>
+            <div class="about-feature">
+              <i class="fas fa-robot"></i>
+              <p data-en="Smart recommendation systems consider soil conditions, climate data, and market demand to suggest the most profitable crops."
+                data-hi="स्मार्ट अनुशंसा प्रणालियां सबसे लाभदायक फसलों का सुझाव देने के लिए मिट्टी की स्थिति, जलवायु डेटा और बाजार की मांग पर विचार करती हैं।">
+                Smart recommendation systems consider soil conditions, climate data, and market demand to suggest the
+                most profitable crops.</p>
+            </div>
+          </div>
+          <div class="about-image">
+            <img
+              src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+              alt="AI Technology in Agriculture">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="contact" style="border-radius: 20px;">
+      <div class="contact-container">
+        <div class="contact-content">
+          <h2 class="section-title" data-en="Get in Touch" data-hi="संपर्क करें">Get in Touch</h2>
+          <p class="section-subtitle" data-en="We're here to help you succeed"
+            data-hi="हम आपकी सफलता में सहायता के लिए यहां हैं">We're here to help you succeed</p>
+
+          <div class="contact-grid">
+            <div class="contact-form">
+              <form>
+                <div class="form-group">
+                  <input type="text" id="contact-name" placeholder="Your Name" required>
+                </div>
+                <div class="form-group">
+                  <input type="email" id="contact-email" placeholder="Your Email" required>
+                </div>
+                <div class="form-group">
+                  <textarea id="contact-message" placeholder="Your Message" required></textarea>
+                </div>
+                <button type="submit" id="contact-submit" class="submit-btn">Send Message</button>
+              </form>
+            </div>
+            <div class="contact-image">
+              <img
+                src="https://images.unsplash.com/photo-1516321165247-4aa89a48be28?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+                alt="Contact Us">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>KrishiGuide</h3>
+        <p data-en="Smart farming solutions powered by AI" data-hi="AI द्वारा संचालित स्मार्ट कृषि समाधान">Smart farming
+          solutions powered by AI</p>
+      </div>
+      <div class="footer-section">
+        <h3 data-hi="
+        त्वरित सम्पक" data-en="Quick Links">Quick Links</h3>
+        <a href="/" data-en="Home" data-hi="होम">Home</a>
+        <a href="#features" data-en="Features" data-hi="सुविधाएं">Features</a>
+        <a href="#about" data-en="About" data-hi="हमारे बारे में">About</a>
+        <a href="#contact" data-en="Contact" data-hi="संपर्क करें">Contact</a>
+      </div>
+      <div class="footer-section">
+        <h3 data-en="Features" data-hi="सुविधाएं">Features</h3>
+        <a href="/crop_recommendation" data-en="Crop Suggestion" data-hi="फसल सुझाव
+        ">Crop Suggestion</a>
+        <a href="/crop_price_predict" data-en="Price Prediction" data-hi="मूल्य भविष्यवाणी
+        ">Price Prediction</a>
+        <a href="#features" data-en="Disease Detection" data-hi="रोग का पता लगाना
+        ">Disease Detection</a>
+        <a href="#features" data-en="Weather Forecast" data-hi="मौसम पूर्वानुमान
+        ">Weather Forecast</a>
+      </div>
+      <div class="footer-section">
+        <h3 data-en="Contact" data-hi="संपर्क करें">Contact</h3>
+        <p>info@krishiguide.com</p>
+        <p>+91 98765 43210</p>
+        <div class="social-links">
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-linkedin"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p data-en="&copy; 2025 KrishiGuide. All rights reserved." data-hi="&copy; 
+      2025 कृषिगाइड। सभी अधिकार सुरक्षित।">&copy; 2025 KrishiGuide. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <div class="chatbot" id="chatbot">
+    <div class="chatbot-toggle">
+      <i class="fas fa-comments"></i>
+    </div>
+    <div class="chatbot-container hidden">
+      <div class="chatbot-header">
+        <h3>KrishiGuide Assistant</h3>
+        <button class="close-chat"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="chatbot-messages"></div>
+      <div class="chatbot-input">
+        <input type="text" placeholder="Type your message...">
+        <button><i class="fas fa-paper-plane"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <script src="static/script.js"></script>
 </body>
 
 </html>

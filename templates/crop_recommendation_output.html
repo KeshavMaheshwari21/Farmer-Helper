@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commodity Price Prediction</title>
+    <link rel="stylesheet" href="static/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Center the form */
+        .form-container {
+            width: 100%;
+            max-width: 600px;
+            /* Adjust width */
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 0 auto;
+            /* Centers horizontally */
+        }
+
+        /* Center the form inside its parent */
+        div[style="display: flex;"] {
+            justify-content: center;
+        }
+
+        /* Style form inputs */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ccc;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+        }
+
+        /* Style buttons */
+        .form-group .btn-primary,
+        .form-group input[type="submit"] {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: bold;
+            text-align: center;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #ff4d4d;
+            /* Red for back button */
+            text-decoration: none;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #cc0000;
+        }
+
+        input[type="submit"] {
+            background-color: #28a745;
+            /* Green for submit */
+            border: none;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #1e7e34;
+        }
+
+        /* Make it responsive */
+        @media (max-width: 768px) {
+            .form-container {
+                width: 90%;
+                padding: 1.5rem;
+            }
+        }
+
+
+        .hero-image img {
+            width: 100%;
+            max-width: 600px;
+            border-radius: 10px;
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+        }
+
+        .hero-image img:hover {
+            transform: rotate(5deg) scale(1.1);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+        }
+
+
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            border-radius: 50%;
+            width: 90px;
+            height: 90px;
+        }
+
+        .logo h1 {
+            margin: 0;
+            margin-left: 12px;
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .logo h1 span {
+            color: rgb(31, 185, 31);
+        }
+
+        /* "You Can Grow" Box */
+        .grow-box {
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+            margin: 40px auto;
+            position: relative;
+        }
+
+        .grow-box h1 {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .grow-box h1 span {
+            color: #28a745;
+        }
+
+        /* Main Crop Slideshow */
+        .crops-container {
+            position: relative;
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+        }
+
+        .crop-item {
+            position: absolute;
+            width: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .crop-item.active {
+            opacity: 1;
+        }
+
+        .crop-image {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            border: 4px solid #28a745;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .crop-name {
+            margin-top: 10px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        /* Mini Crop Circle Gallery */
+        .mini-gallery {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .mini-crop {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid #28a745;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease-in-out;
+            cursor: pointer;
+        }
+
+        .mini-crop:hover {
+            transform: scale(1.1);
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background-color: #28a745;
+            color: white;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            padding: 12px 20px;
+            text-decoration: none;
+            font-size: 18px;
+            border-radius: 8px;
+            display: inline-block;
+            transition: background 0.3s ease;
+            font-weight: bold;
+            margin: 40px auto;
+            text-align: center;
+            display: block;
+            width: fit-content;
+        }
+
+        .btn-primary:hover {
+            background-color: #218838;
+        }
+
+        
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .grow-box {
+                width: 90%;
+            }
+
+            .crop-image {
+                width: 140px;
+                height: 140px;
+            }
+
+            .crop-name {
+                font-size: 18px;
+            }
+
+            .mini-crop {
+                width: 50px;
+                height: 50px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <body class="light">
+        <nav>
+            <div class="logo">KrishiGuide</div>
+            <div class="nav-links">
+                <a href="{{ url_for('index') }}" class="active">Home</a>
+                <a href="#features">Features</a>
+                <a href="#about">About</a>
+                <a href="#contact">Contact</a>
+                <button id="langToggle">EN</button>
+                <button id="themeToggle"><i class="fas fa-moon"></i></button>
+                <button class="get-started">Get Started</button>
+            </div>
+        </nav>
+
+        <!-- "You Can Grow" Section -->
+        <div class="grow-box" style="margin-top: 100px;">
+            <h1 data-en="You can Grow" data-hi="आप इन्हें उगा सकते हैं">You can Grow</h1>
+
+            <!-- Main Crop Slideshow -->
+            <div class="crops-container">
+                {% for crop in crops %}
+                <div class="crop-item">
+                    <img src="{{ url_for('static', filename=crop.image) }}" alt="{{ crop.name }}" class="crop-image">
+                    <div class="crop-name">{{ crop.name }}</div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Mini Crop Gallery -->
+            <div class="mini-gallery">
+                {% for crop in crops %}
+                <img src="{{ url_for('static', filename=crop.image) }}" alt="{{ crop.name }}" class="mini-crop"
+                    onclick="showSpecificCrop({{ loop.index0 }})">
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Back Button -->
+        <a href="/" class="btn-primary" data-en="Back to Home" data-hi="होम वापस जाए">Back to Home</a>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>KrishiGuide</h3>
+                    <p data-en="Smart farming solutions powered by AI" data-hi="AI द्वारा संचालित स्मार्ट कृषि समाधान">
+                        Smart farming
+                        solutions powered by AI</p>
+                </div>
+                <div class="footer-section">
+                    <h3 data-hi="
+              त्वरित सम्पक" data-en="Quick Links">Quick Links</h3>
+                    <a href="{{ url_for('index') }}" data-en="Home" data-hi="होम">Home</a>
+                    <a href="#features" data-en="Features" data-hi="सुविधाएं">Features</a>
+                    <a href="#about" data-en="About" data-hi="हमारे बारे में">About</a>
+                    <a href="#contact" data-en="Contact" data-hi="संपर्क करें">Contact</a>
+                </div>
+                <div class="footer-section">
+                    <h3 data-en="Features" data-hi="सुविधाएं">Features</h3>
+                    <a href="/crop_recommendation" data-en="Crop Suggestion" data-hi="फसल सुझाव
+              ">Crop Suggestion</a>
+                    <a href="/crop_price_predict" data-en="Price Prediction" data-hi="मूल्य भविष्यवाणी
+              ">Price Prediction</a>
+                    <a href="#features" data-en="Disease Detection" data-hi="रोग का पता लगाना
+              ">Disease Detection</a>
+                    <a href="#features" data-en="Weather Forecast" data-hi="मौसम पूर्वानुमान
+              ">Weather Forecast</a>
+                </div>
+                <div class="footer-section">
+                    <h3 data-en="Contact" data-hi="संपर्क करें">Contact</h3>
+                    <p>info@krishiguide.com</p>
+                    <p>+91 98765 43210</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p data-en="&copy; 2025 KrishiGuide. All rights reserved." data-hi="&copy; 
+            2025 कृषिगाइड। सभी अधिकार सुरक्षित।">&copy; 2025 KrishiGuide. All rights reserved.</p>
+            </div>
+        </footer>
+
+        <script src="static/script.js"></script>
+
+        <script>
+            // Slideshow Animation for Crops
+            let currentIndex = 0;
+            const crops = document.querySelectorAll('.crop-item');
+
+            function showCrop(index) {
+                crops.forEach((crop, i) => {
+                    crop.classList.remove('active');
+                    if (i === index) {
+                        crop.classList.add('active');
+                    }
+                });
+            }
+
+            function startSlideshow() {
+                showCrop(currentIndex);
+                setInterval(() => {
+                    currentIndex = (currentIndex + 1) % crops.length;
+                    showCrop(currentIndex);
+                }, 3000);
+            }
+
+            // Show specific crop when clicking on small circles
+            function showSpecificCrop(index) {
+                currentIndex = index;
+                showCrop(index);
+            }
+
+            window.onload = startSlideshow;
+        </script>
+    </body>
+
+</html>

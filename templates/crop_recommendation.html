@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Commodity Price Prediction</title>
+  <link rel="stylesheet" href="static/style.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    /* Center the form */
+    .form-container {
+      width: 100%;
+      max-width: 600px;
+      /* Adjust width */
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin: 0 auto;
+      /* Centers horizontally */
+    }
+
+    /* Center the form inside its parent */
+    div[style="display: flex;"] {
+      justify-content: center;
+    }
+
+    /* Style form inputs */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      font-weight: bold;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+    }
+
+    /* Style buttons */
+    .form-group .btn-primary,
+    .form-group input[type="submit"] {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: bold;
+      text-align: center;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .btn-primary {
+      background-color: #ff4d4d;
+      /* Red for back button */
+      color: white;
+      text-decoration: none;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background-color: #cc0000;
+    }
+
+    input[type="submit"] {
+      background-color: #28a745;
+      /* Green for submit */
+      color: white;
+      border: none;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #1e7e34;
+    }
+
+    /* Make it responsive */
+    @media (max-width: 768px) {
+      .form-container {
+        width: 90%;
+        padding: 1.5rem;
+      }
+    }
+
+
+    .hero-image img {
+      width: 100%;
+      max-width: 600px;
+      border-radius: 10px;
+      transition: transform 0.5s ease, box-shadow 0.5s ease;
+    }
+
+    .hero-image img:hover {
+      transform: rotate(5deg) scale(1.1);
+      box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+    }
+    /* Style submit button */
+input[type="submit"],
+button[type="submit"] {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  font-weight: bold;
+  text-align: center;
+  border: none;
+  border-radius: 0.5rem;
+  background-color: #28a745; /* Green color */
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+/* Hover effect */
+input[type="submit"]:hover,
+button[type="submit"]:hover {
+  background-color: #1e7e34;
+  transform: scale(1.05);
+}
+
+/* Ensure button looks good on small screens */
+@media (max-width: 768px) {
+  input[type="submit"],
+  button[type="submit"] {
+    font-size: 0.9rem;
+    padding: 0.65rem;
+  }
+}
+
+  </style>
+</head>
+
+<body class="light">
+  <nav>
+    <div class="logo">KrishiGuide</div>
+    <div class="nav-links">
+      <a href="{{ url_for('index') }}" class="active">Home</a>
+      <a href="#features">Features</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+      <button id="langToggle">EN</button>
+      <button id="themeToggle"><i class="fas fa-moon"></i></button>
+      <button class="get-started">Get Started</button>
+    </div>
+  </nav>
+
+  <main>
+    <section id="home" class="hero">
+      <div class="hero-content">
+        <span class="tag">AI-Powered Farming</span>
+        <h1 class="title" data-en="Crop Suggestion" data-hi="फसल सुझाव">Crop Suggestion</h1>
+        <p class="subtitle"
+          data-en="Make data-driven decisions with AI-powered tools designed specifically for farmers. Increase yields, predict prices, and protect your crops."
+          data-hi="किसानों के लिए विशेष रूप से डिज़ाइन किए गए AI-संचालित टूल्स के साथ डेटा-आधारित निर्णय लें। उपज बढ़ाएं, कीमतों की भविष्यवाणी करें और अपनी फसलों की रक्षा करें।">
+          Make data-driven decisions with AI-powered tools designed specifically for farmers. Increase yields, predict
+          prices, and protect your crops.</p>
+
+
+      </div>
+      <div class="hero-image">
+        <img src="static/photo1.jpg" alt="Farmer using technology">
+      </div>
+    </section>
+
+    <div style="display: flex;">
+      <div class="form-container">
+        <h2 style="text-align: center;margin-bottom: 20px;" data-en="Enter Soil Parameters" data-hi="मृदा पैरामीटर दर्ज करें
+        ">Enter Soil Parameters</h2>
+        <form action="{{ url_for('submit') }}" method="post">
+          <div class="form-group">
+            <label for="n" data-en="Nitrogen:" data-hi="नाइट्रोजन:">Nitrogen:</label>
+            <input type="text" id="n" name="n" required>
+          </div>
+          <div class="form-group">
+            <label for="p" data-en="Phosphorus:" data-hi="फास्फोरस">Phosphorus:</label>
+            <input type="text" id="p" name="p" required>
+          </div>
+          <div class="form-group">
+            <label for="k" data-en="Potassium:" data-hi="पोटैशियम:
+                    ">Potassium:</label>
+            <input type="text" id="k" name="k" required>
+          </div>
+          <div class="form-group">
+            <label for="temperature" data-en="Temperature:" data-hi="तापमान:">Temperature:</label>
+            <input type="text" id="temperature" name="temperature" required>
+          </div>
+          <div class="form-group">
+            <label for="humidity" data-en="Humidity:" data-hi="नमी:">Humidity:</label>
+            <input type="text" id="humidity" name="humidity" required>
+          </div>
+          <div class="form-group">
+            <label for="ph" data-en="pH:" data-hi="पीएच:">pH:</label>
+            <input type="text" id="ph" name="ph" required>
+          </div>
+          <div class="form-group">
+            <label for="rainfall" data-en="Rainfall:" data-hi="
+            वर्षा:">Rainfall:</label>
+            <input type="text" id="rainfall" name="rainfall" required>
+          </div>
+          <div class="form-group">
+            <button type="submit" id="submit-btn" value="Submit" data-en="Submit" data-hi="सबमिट करें">Submit</button>
+          </div>
+        </form>
+      </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>KrishiGuide</h3>
+        <p data-en="Smart farming solutions powered by AI" data-hi="AI द्वारा संचालित स्मार्ट कृषि समाधान">Smart farming
+          solutions powered by AI</p>
+      </div>
+      <div class="footer-section">
+        <h3 data-hi="
+          त्वरित सम्पक" data-en="Quick Links">Quick Links</h3>
+        <a href="{{ url_for('index') }}" data-en="Home" data-hi="होम">Home</a>
+        <a href="#features" data-en="Features" data-hi="सुविधाएं">Features</a>
+        <a href="#about" data-en="About" data-hi="हमारे बारे में">About</a>
+        <a href="#contact" data-en="Contact" data-hi="संपर्क करें">Contact</a>
+      </div>
+      <div class="footer-section">
+        <h3 data-en="Features" data-hi="सुविधाएं">Features</h3>
+        <a href="/crop_recommendation" data-en="Crop Suggestion" data-hi="फसल सुझाव
+          ">Crop Suggestion</a>
+        <a href="/crop_price_predict" data-en="Price Prediction" data-hi="मूल्य भविष्यवाणी
+          ">Price Prediction</a>
+        <a href="#features" data-en="Disease Detection" data-hi="रोग का पता लगाना
+          ">Disease Detection</a>
+        <a href="#features" data-en="Weather Forecast" data-hi="मौसम पूर्वानुमान
+          ">Weather Forecast</a>
+      </div>
+      <div class="footer-section">
+        <h3 data-en="Contact" data-hi="संपर्क करें">Contact</h3>
+        <p>info@krishiguide.com</p>
+        <p>+91 98765 43210</p>
+        <div class="social-links">
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-linkedin"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p data-en="&copy; 2025 KrishiGuide. All rights reserved." data-hi="&copy; 
+        2025 कृषिगाइड। सभी अधिकार सुरक्षित।">&copy; 2025 KrishiGuide. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="static/script.js"></script>
+</body>
+
+</html>

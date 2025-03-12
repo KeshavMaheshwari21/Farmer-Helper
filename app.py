@@ -5,8 +5,38 @@ import pickle
 
 app = Flask(__name__)
 
-# Load dataset once
-df = pd.read_csv('static/Data_change.csv')
+new_df = pd.read_csv('static/Data_change.csv')
+
+with open("models/kmeans_model.pkl", "rb") as f:
+    kmeans = pickle.load(f)
+
+with open("models/standardscaler.pkl", "rb") as f:
+    std = pickle.load(f)
+
+df = pd.read_csv('models/filtering_data.csv')
+
+item_images = {
+    0: [{'name': 'Pigeonpeas (अरहर/तूर दाल)', 'image': 'images/pigeonpeas.jpg'},{'name': 'Moth Beans (मोठ/मोठ दाल)', 'image': 'images/mothbeans.jpg'},
+        {'name': 'Mung Bean (मूंग)', 'image': 'images/mungbean.jpg'},{'name': 'Black Gram (उड़द दाल)', 'image': 'images/blackgram.jpg'},
+        {'name': 'Lentil (मसूर दाल)', 'image': 'images/lentil.jpg'},{'name': 'Mango (आम)', 'image': 'images/mango.jpg'},
+        {'name': 'Orange (संतरा)', 'image': 'images/orange.jpg'},{'name': 'Papaya (पपीता)', 'image': 'images/papaya.jpg'}],
+    1: [{'name': 'Maize (मक्का/भुट्टा)', 'image': 'images/maize.jpg'},{'name': 'Lentil (मसूर दाल)', 'image': 'images/lentil.jpg'},
+        {'name': 'Banana (केला)', 'image': 'images/banana.jpg'},{'name': 'Papaya (पपीता)', 'image': 'images/papaya.jpg'},
+        {'name': 'Coconut (नारियल)', 'image': 'images/coconut.jpg'},{'name': 'Cotton (कपास)', 'image': 'images/cotton.jpg'},
+        {'name': 'Jute (पटसन/जूट)', 'image': 'images/jute.jpg'},{'name': 'Coffee (कॉफी)', 'image': 'images/coffee.jpg'}],
+    2: [{'name': 'Grapes (अंगूर)', 'image': 'images/grapes.jpg'},{'name': 'Apple (सेब)', 'image': 'images/apple.jpg'}],
+    3: [{'name': 'Pigeonpeas (अरहर/तूर दाल)', 'image': 'images/pigeonpeas.jpg'},{'name': 'Pomegranate (अनार)', 'image': 'images/pomegranate.jpg'},
+        {'name': 'Orange (संतरा)', 'image': 'images/orange.jpg'},{'name': 'Papaya (पपीता)', 'image': 'images/papaya.jpg'},
+        {'name': 'Coconut (नारियल)', 'image': 'images/coconut.jpg'}],
+    4: [{'name': 'Rice (चावल)', 'image': 'images/rice.jpg'},{'name': 'Pigeonpeas (अरहर/तूर दाल)', 'image': 'images/pigeonpeas.jpg'},
+        {'name': 'Papaya (पपीता)', 'image': 'images/papaya.jpg'},{'name': 'Coconut (नारियल)', 'image': 'images/coconut.jpg'},
+        {'name': 'Jute (पटसन/जूट)', 'image': 'images/jute.jpg'},{'name': 'Coffee (कॉफी)', 'image': 'images/coffee.jpg'}],
+    5: [{'name': 'Pigeonpeas (अरहर/तूर दाल)', 'image': 'images/pigeonpeas.jpg'},{'name': 'Moth Beans (मोठ/मोठ दाल)', 'image': 'images/mothbeans.jpg'},
+        {'name': 'Lentil (मसूर दाल)', 'image': 'images/lentil.jpg'},{'name': 'Mango (आम)', 'image': 'images/mango.jpg'}],
+    6: [{'name': 'Watermelon (तरबूज)', 'image': 'images/watermelon.jpg'},{'name': 'Muskmelon (खरबूजा)', 'image': 'images/muskmelon.jpg'}],
+    7: [{'name': 'Chickpea (Chickpea)', 'image': 'images/chickpea.jpg'},{'name': 'Kidney Beans (राजमा)', 'image': 'images/kidneybeans.jpg'},
+        {'name': 'Pigeonpeas (अरहर/तूर दाल)', 'image': 'images/pigeonpeas.jpg'},{'name': 'Lentil (मसूर दाल)', 'image': 'images/lentil.jpg'}]
+}
 
 # Function to load ML model
 def load_model():
@@ -28,7 +58,7 @@ def index():
 
 @app.route('/crop_price_predict')
 def crop_price_predict():
-    states = df['State'].dropna().unique().tolist()
+    states = new_df['State'].dropna().unique().tolist()
     return render_template('crop_price_predict.html', states=states)
 
 @app.route('/get_options', methods=['POST'])
@@ -40,7 +70,7 @@ def get_options():
     if not state:
         return jsonify({'error': 'State is required'}), 400
 
-    filtered_df = df[df['State'] == state]
+    filtered_df = new_df[new_df['State'] == state]
 
     options = {
         'districts': filtered_df['District'].dropna().unique().tolist(),
@@ -77,6 +107,39 @@ def predict():
         return jsonify({'predicted_price': f"₹{predicted_price:.2f}"})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+@app.route('/crop_recommendation')
+def crop_recommendation():
+    return render_template('crop_recommendation.html')
+
+@app.route('/crop_recommendation_output')
+def crop_recommendation_output():
+    return render_template('crop_recommendation_output.html')
+
+@app.route('/submit', methods=['POST'])
+def submit():
+    # Retrieve form data
+    n = float(request.form.get('n'))
+    p = float(request.form.get('p'))
+    k = float(request.form.get('k'))
+    temperature = float(request.form.get('temperature'))
+    humidity = float(request.form.get('humidity'))
+    ph = float(request.form.get('ph'))
+    rainfall = float(request.form.get('rainfall'))
+
+    # Prepare input data for prediction
+    input_data = np.array([[n, p, k, temperature, humidity, ph, rainfall]])
+
+    # Transform the input data
+    transformed_input_data = std.transform(input_data)
+
+    # Make prediction using the KMeans model
+    cluster = kmeans.predict(transformed_input_data)[0]
+
+    crops = item_images.get(cluster, [{'name': 'Unknown', 'image': 'images/default.jpg'}] * 5)
+
+    # Pass the predicted cluster to the output page
+    return render_template('crop_recommendation_output.html', crops=crops)
 
 if __name__ == '__main__':
     app.run(debug=True)
