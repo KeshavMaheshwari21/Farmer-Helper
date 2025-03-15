@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer Weather Forecast</title>
+    <link rel="stylesheet" href="static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script defer src="{{ url_for('static', filename='script.js') }}"></script>
+</head>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+    .container {
+        max-width: 90%;
+        margin: auto;
+        background: rgba(255, 255, 255, 0.15);
+        padding: 20px;
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.2);
+    }
+
+    h1 {
+        font-size: 2.5rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    /* 🔹 Weather Overview Card */
+    .weather-card {
+        background: rgba(255, 255, 255, 0.25);
+        padding: 15px;
+        border-radius: 10px;
+        margin: 15px auto;
+        width: 50%;
+        /* Made it more compact */
+        max-width: 400px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .weather-card:hover {
+        transform: scale(1.05);
+    }
+
+    .temp {
+        font-size: 3rem;
+        font-weight: bold;
+    }
+
+    /* 🔹 7-Day Forecast Section */
+    .forecast-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+        width: 100%;
+        max-width: 900px;
+        padding: 10px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .forecast-card {
+        padding: 15px;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(8px);
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .forecast-card:hover {
+        transform: scale(1.08);
+        z-index: 10;
+        position: relative;
+    }
+
+    /* 🔹 Responsive Design */
+    @media (max-width: 768px) {
+        .weather-card {
+            width: 80%;
+        }
+
+        .forecast-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .forecast-card {
+            width: 80%;
+        }
+    }
+
+    .hero-image img {
+        width: 100%;
+        max-width: 600px;
+        border-radius: 10px;
+        transition: transform 0.5s ease, box-shadow 0.5s ease;
+    }
+
+    .hero-image img:hover {
+        transform: rotate(5deg) scale(1.1);
+        box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+    }
+</style>
+
+<body class="light">
+    <nav>
+        <div class="logo">KrishiGuide</div>
+        <div class="nav-links">
+            <a href="#home" class="active">Home</a>
+            <a href="#features">Features</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
+            <button id="langToggle">EN</button>
+            <button id="themeToggle"><i class="fas fa-moon"></i></button>
+            <button class="get-started" onclick="window.location.href='#features';">Get Started</button>
+        </div>
+    </nav>
+    <main>
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <span class="tag">AI-Powered Farming</span>
+                <h1 class="title" data-en="Weather Forecast" data-hi="मौसम पूर्वानुमान
+                ">Weather Forecast</h1>
+                <p class="subtitle"
+                    data-en="Make data-driven decisions with AI-powered tools designed specifically for farmers. Increase yields, predict prices, and protect your crops."
+                    data-hi="किसानों के लिए विशेष रूप से डिज़ाइन किए गए AI-संचालित टूल्स के साथ डेटा-आधारित निर्णय लें। उपज बढ़ाएं, कीमतों की भविष्यवाणी करें और अपनी फसलों की रक्षा करें।">
+                    Make data-driven decisions with AI-powered tools designed specifically for farmers. Increase yields,
+                    predict
+                    prices, and protect your crops.</p>
+            </div>
+            <div class="hero-image">
+                <img src="static/images/weather_forecast.jpeg"
+                    alt="Farmer using technology">
+            </div>
+        </section>
+
+        <div class="container" style="margin-top: 10px;margin-bottom: 30px;">
+            <div class="weather-card">
+                <h2 class="city" style="text-align: center;">--</h2>
+                <p class="temp" style="text-align: center;">--°C</p>
+                <p class="desc" style="text-align: center;">--</p>
+                <p class="wind" style="text-align: center;">Wind Speed: -- m/s</p>
+                <p class="humidity" style="text-align: center;">Humidity: --%</p>
+            </div>
+
+            <div class="forecast-container" style="margin-top: 40px;margin-bottom: 40px;"></div>
+        </div>
+</body>
+</main>
+<footer>
+    <div class="footer-content">
+        <div class="footer-section">
+            <h3>KrishiGuide</h3>
+            <p data-en="Smart farming solutions powered by AI" data-hi="AI द्वारा संचालित स्मार्ट कृषि समाधान">Smart
+                farming
+                solutions powered by AI</p>
+        </div>
+        <div class="footer-section">
+            <h3 data-hi="
+        त्वरित सम्पक" data-en="Quick Links">Quick Links</h3>
+            <a href="/" data-en="Home" data-hi="होम">Home</a>
+            <a href="#features" data-en="Features" data-hi="सुविधाएं">Features</a>
+            <a href="#about" data-en="About" data-hi="हमारे बारे में">About</a>
+            <a href="#contact" data-en="Contact" data-hi="संपर्क करें">Contact</a>
+        </div>
+        <div class="footer-section">
+            <h3 data-en="Features" data-hi="सुविधाएं">Features</h3>
+            <a href="/crop_recommendation" data-en="Crop Suggestion" data-hi="फसल सुझाव
+        ">Crop Suggestion</a>
+            <a href="/crop_price_predict" data-en="Price Prediction" data-hi="मूल्य भविष्यवाणी
+        ">Price Prediction</a>
+            <a href="/plant_disease" data-en="Disease Detection" data-hi="रोग का पता लगाना
+        ">Disease Detection</a>
+            <a href="#features" data-en="Weather Forecast" data-hi="मौसम पूर्वानुमान
+        ">Weather Forecast</a>
+        </div>
+        <div class="footer-section">
+            <h3 data-en="Contact" data-hi="संपर्क करें">Contact</h3>
+            <p>info@krishiguide.com</p>
+            <p>+91 98765 43210</p>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p data-en="&copy; 2025 KrishiGuide. All rights reserved." data-hi="&copy; 
+      2025 कृषिगाइड। सभी अधिकार सुरक्षित।">&copy; 2025 KrishiGuide. All rights reserved.</p>
+    </div>
+</footer>
+
+<script src="static/script.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition, showError);
+        } else {
+            document.querySelector(".location").textContent = "Geolocation not supported!";
+        }
+    });
+
+    function showPosition(position) {
+        let lat = position.coords.latitude;
+        let lon = position.coords.longitude;
+
+        fetch(`/getWeather?lat=${lat}&lon=${lon}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.querySelector(".location").textContent = data.error;
+                    return;
+                }
+
+                document.querySelector(".city").textContent = data.city;
+                document.querySelector(".temp").textContent = `${data.temperature}°C`;
+                document.querySelector(".desc").textContent = data.weather;
+                document.querySelector(".wind").textContent = `Wind Speed: ${data.wind_speed} m/s`;
+                document.querySelector(".humidity").textContent = `Humidity: ${data.humidity}%`;
+
+                const forecastContainer = document.querySelector(".forecast-container");
+                forecastContainer.innerHTML = "";
+                data.forecast.forEach(day => {
+                    forecastContainer.innerHTML += `
+                  <div class="forecast-card">
+                      <p>${day.date}</p>
+                      <img src="https://openweathermap.org/img/wn/${day.icon}.png" alt="Weather icon">
+                      <p>${day.temp}°C</p>
+                      <p>${day.weather}</p>
+                  </div>
+              `;
+                });
+
+                // Populate recommendations
+                const recommendationList = document.querySelector(".recommendations");
+                recommendationList.innerHTML = "";
+                data.recommendations.forEach(rec => {
+                    let listItem = document.createElement("li");
+                    listItem.textContent = rec;
+                    recommendationList.appendChild(listItem);
+                });
+
+                if (data.recommendations.length === 0) {
+                    recommendationList.innerHTML = "<li>✅ General Tip: Regularly check soil moisture.</li>";
+                }
+            })
+            .catch(error => {
+                document.querySelector(".location").textContent = "Failed to fetch weather data!";
+            });
+    }
+
+    function showError(error) {
+        document.querySelector(".location").textContent = `Error: ${error.message}`;
+    }
+
+</script>
+
+</html>

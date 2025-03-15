@@ -2,10 +2,21 @@ from flask import Flask, request, render_template, jsonify
 import numpy as np
 import pandas as pd
 import pickle
+import os
+import json
+import numpy as np
+import tensorflow as tf
+from PIL import Image
+import google.generativeai as genai
+from dotenv import load_dotenv
+import re
+import requests
 
 app = Flask(__name__)
 
-new_df = pd.read_csv('static/Data_change.csv')
+OPENWEATHER_API_KEY = "7a91ad5c225eee9832f9efc6a1812fe6"
+
+new_df = pd.read_csv('models/Data_change.csv')
 
 with open("models/kmeans_model.pkl", "rb") as f:
     kmeans = pickle.load(f)
@@ -40,12 +51,12 @@ item_images = {
 
 # Function to load ML model
 def load_model():
-    with open("static/crop_price_model.pkl", "rb") as model_file:
+    with open("models/crop_price_model.pkl", "rb") as model_file:
         return pickle.load(model_file)
 
 # Function to load encoder
 def load_encoder():
-    with open("static/crop_price_encoder.pkl", "rb") as encoder_file:
+    with open("models/crop_price_encoder.pkl", "rb") as encoder_file:
         return pickle.load(encoder_file)
 
 # Load the trained model and encoder
@@ -140,6 +151,210 @@ def submit():
 
     # Pass the predicted cluster to the output page
     return render_template('crop_recommendation_output.html', crops=crops)
+
+load_dotenv()
+API_KEY = os.getenv("GOOGLE_API_KEY")
+genai.configure(api_key=API_KEY)
+
+# Initialize Flask
+UPLOAD_FOLDER = 'static/uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Load the pre-trained model
+model_path = "models/plant_disease_prediction_model.h5"
+model = tf.keras.models.load_model(model_path)
+
+# Load class indices
+with open("models/class_indices.json", "r") as f:
+    class_indices = json.load(f)
+class_indices = {int(k): v for k, v in class_indices.items()}
+
+# Function to preprocess the image
+def load_and_preprocess_image(image_path, target_size=(224, 224)):
+    img = Image.open(image_path)
+    img = img.resize(target_size)
+    img_array = np.array(img) / 255.0
+    img_array = np.expand_dims(img_array, axis=0)
+    return img_array
+
+# Function to predict plant disease
+def predict_image_class(image_path):
+    preprocessed_img = load_and_preprocess_image(image_path)
+    predictions = model.predict(preprocessed_img)
+    predicted_class_index = np.argmax(predictions, axis=1)[0]
+    predicted_class_name = class_indices[predicted_class_index]
+    return predicted_class_name
+
+
+
+# Function to generate precautions using Gemini AI with error handling
+
+def get_precautions(disease):
+    prompt = f"""
+    Provide a detailed explanation and precautions for the plant disease '{disease}' in both English and Hindi.
+
+    **Format the response exactly like this:**
+    
+    Disease in English: <disease_name_english>
+    Disease in Hindi: <disease_name_hindi>
+    Explanation in English: <explanation_english>
+    Explanation in Hindi: <explanation_hindi>
+    Precautions in English: <precautions_english>
+    Precautions in Hindi: <precautions_hindi>
+    """
+
+    try:
+        model_gemini = genai.GenerativeModel("gemini-1.5-flash")
+        response = model_gemini.generate_content(prompt)
+
+        if not response or not response.text:
+            raise ValueError("Empty response from Gemini AI.")
+
+        # Debug: Print full response
+        print("\n=== Raw Gemini Response ===\n")
+        print(response.text)
+        print("\n===========================\n")
+
+        # Initialize keys
+        details = {
+            "disease_en": disease,
+            "disease_hi": "अज्ञात रोग",
+            "explanation_en": "",
+            "explanation_hi": "",
+            "precautions_en": "",
+            "precautions_hi": "",
+        }
+
+        # Parsing logic for multi-line values
+        current_key = None
+        for line in response.text.split("\n"):
+            line = line.strip()
+            if line.lower().startswith("disease in english:"):
+                details["disease_en"] = line.split(":", 1)[1].strip()
+                current_key = None
+            elif line.lower().startswith("disease in hindi:"):
+                details["disease_hi"] = line.split(":", 1)[1].strip()
+                current_key = None
+            elif line.lower().startswith("explanation in english:"):
+                details["explanation_en"] = line.split(":", 1)[1].strip()
+                current_key = "explanation_en"
+            elif line.lower().startswith("explanation in hindi:"):
+                details["explanation_hi"] = line.split(":", 1)[1].strip()
+                current_key = "explanation_hi"
+            elif line.lower().startswith("precautions in english:"):
+                details["precautions_en"] = line.split(":", 1)[1].strip()
+                current_key = "precautions_en"
+            elif line.lower().startswith("precautions in hindi:"):
+                details["precautions_hi"] = line.split(":", 1)[1].strip()
+                current_key = "precautions_hi"
+            elif current_key:
+                details[current_key] += " " + line.strip()
+
+        return details
+
+    except Exception as e:
+        print("Error generating content from Gemini AI:", e)
+        return {
+            "disease_en": disease,
+            "disease_hi": "अनुमानित रोग",
+            "explanation_en": "No explanation available.",
+            "explanation_hi": "इस समय कोई विवरण उपलब्ध नहीं।",
+            "precautions_en": "No precautions available.",
+            "precautions_hi": "इस समय कोई सावधानियाँ उपलब्ध नहीं हैं।",
+        }
+
+
+# Flask Routes
+@app.route("/plant_disease", methods=["GET", "POST"])
+def plant_disease():
+    if request.method == "POST":
+        if "image" not in request.files:
+            return render_template("index.html", error="No file uploaded")
+
+        file = request.files["image"]
+        if file.filename == "":
+            return render_template("index.html", error="No file selected")
+
+        # Save uploaded file
+        filepath = os.path.join(app.config["UPLOAD_FOLDER"], file.filename)
+        file.save(filepath)
+
+        # Predict disease
+        predicted_disease = predict_image_class(filepath)
+
+        # Get precautions and related details
+        details = get_precautions(predicted_disease)
+
+        return render_template(
+            "plant_disease.html",
+            image=filepath,
+            disease_en=details["disease_en"],
+            disease_hi=details["disease_hi"],
+            explanation_en=details["explanation_en"],
+            explanation_hi=details["explanation_hi"],
+            precautions_en=details["precautions_en"],
+            precautions_hi=details["precautions_hi"],
+        )
+
+    return render_template("plant_disease.html")
+
+@app.route('/weather_forecast')
+def weather_forecast():
+    return render_template('weather_forecast.html')
+
+@app.route('/developers')
+def developers():
+    return render_template('developers.html')
+
+@app.route('/getWeather', methods=['GET'])
+def get_weather():
+    lat = request.args.get('lat')
+    lon = request.args.get('lon')
+
+    if not lat or not lon:
+        return jsonify({"error": "Missing latitude or longitude"}), 400
+
+    weather_url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=metric&appid={OPENWEATHER_API_KEY}"
+    forecast_url = f"https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&units=metric&appid={OPENWEATHER_API_KEY}"
+
+    try:
+        weather_response = requests.get(weather_url)
+        forecast_response = requests.get(forecast_url)
+
+        weather_data = weather_response.json()
+        forecast_data = forecast_response.json()
+
+        if weather_response.status_code != 200 or forecast_response.status_code != 200:
+            return jsonify({"error": "Failed to fetch weather data"}), 500
+
+        forecast_list = []
+        unique_dates = set()
+        for forecast in forecast_data["list"]:
+            date = forecast["dt_txt"].split(" ")[0]
+            if date not in unique_dates:
+                unique_dates.add(date)
+                forecast_list.append({
+                    "date": date,
+                    "temp": forecast["main"]["temp"],
+                    "humidity": forecast["main"]["humidity"],
+                    "rain": forecast.get("rain", {}).get("3h", 0),  # Rainfall in last 3 hours
+                    "wind_speed": forecast["wind"]["speed"],
+                    "weather": forecast["weather"][0]["description"].capitalize(),
+                    "icon": forecast["weather"][0]["icon"]
+                })
+            if len(forecast_list) == 7:
+                break
+
+        return jsonify({
+            "city": weather_data.get("name", "Unknown Location"),
+            "temperature": weather_data["main"]["temp"],
+            "weather": weather_data["weather"][0]["description"].capitalize(),
+            "wind_speed": weather_data["wind"]["speed"],
+            "humidity": weather_data["main"]["humidity"],
+            "forecast": forecast_list        })
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

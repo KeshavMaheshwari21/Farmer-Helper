@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developers Page</title>
+    <link rel="stylesheet" href="static/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js" crossorigin="anonymous"></script>
+    <style>
+        .team-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 50px;
+            padding: 20px;
+        }
+        .team-member {
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 250px;
+            transition: transform 0.3s ease-in-out;
+        }
+        .team-member:hover {
+            transform: rotate(2deg) scale(1.1);
+        }
+        .team-member img {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .name {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .social-icons a {
+            margin: 0 10px;
+            font-size: 28px;
+            text-decoration: none;
+            color: #333;
+            transition: transform 0.3s, color 0.3s;
+        }
+        .social-icons a:hover {
+            transform: scale(1.3);
+            color: #0073b1;
+        }
+        @media (max-width: 768px) {
+            .team-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .team-member {
+                width: 90%;
+                max-width: 350px;
+            }
+            .team-member img {
+                width: 120px;
+                height: 120px;
+            }
+        }
+    </style>
+</head>
+<body class="light">
+    <nav>
+      <div class="logo">KrishiGuide</div>
+      <div class="nav-links">
+        <a href="#home" class="active">Home</a>
+        <a href="#features">Features</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+        <button id="langToggle">EN</button>
+        <button id="themeToggle"><i class="fas fa-moon"></i></button>
+        <button class="get-started" onclick="window.location.href='#features';">Get Started</button>
+      </div>
+    </nav>
+    <h1 style="margin-top: 120px;text-align: center;" class="title" data-en="Meet Our Developers" data-hi="हमारे डेवलपर्स से मिलें">Meet Our Developers</h1>
+    <div class="team-container" style="margin-bottom: 100px;">
+        <div class="team-member">
+            <div style="display: flex; justify-content: center; align-items: center;">
+                <img src="static/images/manvik_khandal.jpg" alt="Developer 1">
+            </div>
+            <div class="name" style="text-align: center;" data-en="Manvik Khandal" data-hi="मानविक खंडाल">Manvik Khandal</div>
+            <div class="social-icons" style="display: flex; justify-content: center; align-items: center;">
+                <a href="https://github.com/manvikkhandal" target="_blank"><i class="fab fa-github"></i></a>
+                <a href="https://www.linkedin.com/in/manvik-khandal-951704254?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app " target="_blank"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+        <div class="team-member">
+            <div style="display: flex; justify-content: center; align-items: center;">
+                <img src="static/images/vinayak_khandelwal.jpg" alt="Developer 2">
+            </div>
+            <div class="name" style="text-align: center;" data-en="Vinayak Khandelwal" data-hi="
+            विनायक खंडेलवाल">Vinayak Khandelwal</div>
+            <div class="social-icons" style="display: flex; justify-content: center; align-items: center;">
+                <a href="https://github.com/VinayakKhandelwal07" target="_blank"><i class="fab fa-github"></i></a>
+                <a href="https://linkedin.com/in/dev2" target="_blank"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+        <div class="team-member">
+            <div style="display: flex; justify-content: center; align-items: center;">
+                <img src="static/images/keshav.jpg" alt="Developer 3">
+            </div>
+            <div class="name" style="text-align: center;" data-en="Keshav" data-hi="केशव">Keshav</div>
+            <div class="social-icons" style="display: flex; justify-content: center; align-items: center;">
+                <a href="https://github.com/KeshavMaheshwari21" target="_blank"><i class="fab fa-github"></i></a>
+                <a href="https://www.linkedin.com/in/keshav-maheshwari-a34933278?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app " target="_blank"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>KrishiGuide</h3>
+            <p data-en="Smart farming solutions powered by AI" data-hi="AI द्वारा संचालित स्मार्ट कृषि समाधान">Smart farming
+              solutions powered by AI</p>
+          </div>
+          <div class="footer-section">
+            <h3 data-hi="
+            त्वरित सम्पक" data-en="Quick Links">Quick Links</h3>
+            <a href="/" data-en="Home" data-hi="होम">Home</a>
+            <a href="#features" data-en="Features" data-hi="सुविधाएं">Features</a>
+            <a href="#about" data-en="About" data-hi="हमारे बारे में">About</a>
+            <a href="#contact" data-en="Contact" data-hi="संपर्क करें">Contact</a>
+            <a href="/developers" data-en="Developers" data-hi="डेवलपर्स">Developers</a>
+          </div>
+          <div class="footer-section">
+            <h3 data-en="Features" data-hi="सुविधाएं">Features</h3>
+            <a href="/crop_recommendation" data-en="Crop Suggestion" data-hi="फसल सुझाव
+            ">Crop Suggestion</a>
+            <a href="/crop_price_predict" data-en="Price Prediction" data-hi="मूल्य भविष्यवाणी
+            ">Price Prediction</a>
+            <a href="/plant_disease" data-en="Disease Detection" data-hi="रोग का पता लगाना
+            ">Disease Detection</a>
+            <a href="#features" data-en="Weather Forecast" data-hi="मौसम पूर्वानुमान
+            ">Weather Forecast</a>
+          </div>
+          <div class="footer-section">
+            <h3 data-en="Contact" data-hi="संपर्क करें">Contact</h3>
+            <p>info@krishiguide.com</p>
+            <p>+91 98765 43210</p>
+            <div class="social-links">
+              <a href="#"><i class="fab fa-facebook"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+              <a href="#"><i class="fab fa-instagram"></i></a>
+              <a href="#"><i class="fab fa-linkedin"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p data-en="&copy; 2025 KrishiGuide. All rights reserved." data-hi="&copy; 
+          2025 कृषिगाइड। सभी अधिकार सुरक्षित।">&copy; 2025 KrishiGuide. All rights reserved.</p>
+        </div>
+      </footer>
+    
+      <script src="static/script.js"></script>
+    </body>
+    
+    </html>
