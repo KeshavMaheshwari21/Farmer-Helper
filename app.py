@@ -265,8 +265,8 @@ def get_precautions(disease):
 
 
 # Flask Routes
-@app.route("/plant_disease", methods=["GET", "POST"])
-def plant_disease():
+@app.route("/plant_disease_output", methods=["GET", "POST"])
+def plant_disease_output():
     if request.method == "POST":
         if "image" not in request.files:
             return render_template("index.html", error="No file uploaded")
@@ -286,7 +286,7 @@ def plant_disease():
         details = get_precautions(predicted_disease)
 
         return render_template(
-            "plant_disease.html",
+            "plant_disease_output.html",
             image=filepath,
             disease_en=details["disease_en"],
             disease_hi=details["disease_hi"],
@@ -301,6 +301,10 @@ def plant_disease():
 @app.route('/weather_forecast')
 def weather_forecast():
     return render_template('weather_forecast.html')
+
+@app.route('/plant_disease')
+def plant_disease():
+    return render_template('plant_disease.html')
 
 @app.route('/developers')
 def developers():

@@ -70,14 +70,12 @@
     text-align: center;
     transition: border-color 0.3s ease, transform 0.3s ease;
     margin: 20px auto;
-    will-change: transform; /* Prevents flickering */
 }
 
 .upload-box:hover {
     border-color: #555;
     transform: scale(1.05);
 }
-
 
 /* Hidden File Input */
 .upload-box input {
@@ -212,38 +210,71 @@ input[type="file"] {
     </nav>
 
     <main>
-        <section id="home" class="hero">
-            <div class="hero-content">
-              <span class="tag">AI-Powered Farming</span>
-              <h1 class="title" data-hi="रोग का पता लगाना" data-en="Disease Detection">Disease Detection</h1>
-              <p class="subtitle"
-                data-en="Make data-driven decisions with AI-powered tools designed specifically for farmers. Increase yields, predict prices, and protect your crops."
-                data-hi="किसानों के लिए विशेष रूप से डिज़ाइन किए गए AI-संचालित टूल्स के साथ डेटा-आधारित निर्णय लें। उपज बढ़ाएं, कीमतों की भविष्यवाणी करें और अपनी फसलों की रक्षा करें।">
-                Make data-driven decisions with AI-powered tools designed specifically for farmers. Increase yields, predict
-                prices, and protect your crops.</p>
-            </div>
-            <div class="hero-image">
-              <img
-                src="static/images/disease_detection.jpeg"
-                alt="Farmer using technology">
-            </div>
-          </section>
 
-        <section id="home" class="hero" style="margin-top: -100px;">
-            <div class="container">
-                <form action="/plant_disease_output" method="POST" enctype="multipart/form-data">
-                    <label class="upload-box">
-                        <span id="upload-text" data-en="Upload Image" data-hi="तस्विर अपलोड करें">Upload Image</span>
-                        <img id="image-preview" alt="Preview">
-                        <input type="file" name="image" accept="image/*" required onchange="previewImage(event)">
-                    </label>
-                    <button type="submit" class="classify-btn" style="color: #fff;" data-en="Classify" data-hi="वर्गीकृत करें
-                    ">Classify</button>
-                </form>
-            </div>
-        </section>
+        {% if error %}
+        <p class="error">{{ error }}</p>
+        {% endif %}
 
- 
+        {% if image %}
+        <div class="container" style="margin-top: -120pxpx;">
+            <div class="result">
+                <h2 style="text-align: center;margin-bottom: 20px;" data-en="Predcited Result" data-hi="पूर्वानुमानित परिणाम
+                ">Predcited Result</h2>
+                <div class="image-container">
+                    <img src="{{ image }}" alt="Uploaded Image">
+                </div>
+                
+                <div class="disease-info">
+                    <h3>Disease Classification (रोग वर्गीकरण):</h3><br>
+                    <p><strong>English:</strong> {{ disease_en }}</p><br>
+                    <p><strong>हिन्दी:</strong> {{ disease_hi }}</p><br>
+                </div>
+
+                <div class="explanation">
+                    <h3>Explanation (स्पष्टीकरण):</h3><br>
+                    <p><strong>English:</strong> {{ explanation_en }}</p><br>
+                    <p><strong>हिन्दी:</strong> {{ explanation_hi }}</p><br>
+                </div>
+
+                <div class="precautions">
+                    <h3>Precautions (सावधानियां):</h3><br>
+                    {% if precautions_en %}
+                    <h4>English:</h4><br>
+                    <ul>
+                        {% for line in precautions_en.split('*') %}
+                        {% if line.strip() %}
+                        <li>{{ line.strip() }}</li>
+                        {% endif %}
+                        {% endfor %}
+                    </ul><br>
+                    {% else %}
+                    <p>No precautions available.</p>
+                    {% endif %}
+
+                    {% if precautions_hi %}
+                    <h4>हिन्दी:</h4><br>
+                    <ul>
+                        {% for line in precautions_hi.split('*') %}
+                        {% if line.strip() %}
+                        <li>{{ line.strip() }}</li>
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p>कोई सावधानी उपलब्ध नहीं।</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Show Download Button Only When Report is Available -->
+        {% if report_link %}
+        <script>
+            document.getElementById("download-report").style.display = "block";
+            document.getElementById("download-report").href = "{{ report_link }}";
+        </script>
+        {% endif %}
 
     </main>
 
