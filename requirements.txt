@@ -1,8 +1,7 @@
-Flask
-flask-cors
+gunicorn
+flask
 numpy
 pandas
-pickle-mixin
 tensorflow
 Pillow
 google-generativeai
