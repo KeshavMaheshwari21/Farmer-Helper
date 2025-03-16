@@ -162,7 +162,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Load the pre-trained model
 model_path = "models/plant_disease_prediction_model.h5"
-model = tf.keras.models.load_model(model_path)
+disease_model = tf.keras.models.load_model(model_path)
 
 # Load class indices
 with open("models/class_indices.json", "r") as f:
@@ -180,7 +180,7 @@ def load_and_preprocess_image(image_path, target_size=(224, 224)):
 # Function to predict plant disease
 def predict_image_class(image_path):
     preprocessed_img = load_and_preprocess_image(image_path)
-    predictions = model.predict(preprocessed_img)
+    predictions = disease_model.predict(preprocessed_img)
     predicted_class_index = np.argmax(predictions, axis=1)[0]
     predicted_class_name = class_indices[predicted_class_index]
     return predicted_class_name
@@ -359,6 +359,27 @@ def get_weather():
     
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+genai.configure(api_key="AIzaSyCdHvM6djoFfXcAHcfxrPH5on6d7fZ5cqA")  # Replace with your actual API key
+
+model = genai.GenerativeModel("gemini-1.5-flash")
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    user_message = request.json.get("message", "").strip()
+
+    if not user_message:
+        return jsonify({"reply": "Please enter a message."})
+
+    try:
+        response = model.generate_content(user_message)
+        print(response)
+        bot_reply = response.text.strip() if response.text else "Sorry, I couldn't understand that."
+
+        return jsonify({"reply": bot_reply})
+    
+    except Exception as e:
+        return jsonify({"reply": "Error processing request."})
 
 if __name__ == '__main__':
     app.run(debug=True)

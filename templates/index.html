@@ -112,24 +112,160 @@
     transform: rotate(5deg) scale(1.1);
     box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
   }
+
   .feature-card a {
-    color: inherit; /* Inherits the color from the parent element */
-    text-decoration: none; /* Removes underline */
+    color: inherit;
+    /* Inherits the color from the parent element */
+    text-decoration: none;
+    /* Removes underline */
+  }
+
+  .feature-card a:hover {
+    color: #009632;
+    /* Changes color on hover */
+  }
+
+  .chatbot-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
 }
 
-.feature-card a:hover {
-    color: #009632; /* Changes color on hover */
+.chatbot-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: none;
+    overflow: hidden;
+    background: none;
+    animation: float 3s ease-in-out infinite;
 }
+
+
+.chatbot-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+.chat-window {
+    position: absolute;
+    bottom: 80px;
+    right: 0;
+    width: 300px;
+    height: 400px;
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.chat-window.active {
+    display: flex;
+}
+
+.chat-header {
+    padding: 1rem;
+    background-color: var(--primary-color);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.close-chat {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.chat-messages {
+    flex-grow: 1;
+    padding: 1rem;
+    overflow-y: auto;
+    background-color: #f8f9fa;
+}
+
+.message {
+    margin-bottom: 1rem;
+    padding: 0.8rem 1rem;
+    border-radius: 10px;
+    max-width: 80%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.message.bot {
+    background-color: #e9ecef;
+    color: #2c3e50;
+    margin-right: auto;
+    border-bottom-left-radius: 4px;
+}
+
+.message.user {
+    background-color: var(--primary-color);
+    color: white;
+    margin-left: auto;
+    border-bottom-right-radius: 4px;
+}
+
+.chat-input {
+    padding: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    border-top: 1px solid #eee;
+    background-color: white;
+}
+
+.chat-input input {
+    flex-grow: 1;
+    padding: 0.8rem;
+    border: 1px solid #e9ecef;
+    border-radius: 5px;
+    outline: none;
+    font-size: 0.9rem;
+}
+
+.chat-input input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(46, 204, 113, 0.1);
+}
+
+.chat-input button {
+    padding: 0.8rem 1.2rem;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.chat-input button:hover {
+    background-color: var(--primary-dark);
+}
+
 </style>
 
 <body class="light">
   <nav>
     <div class="logo">KrishiGuide</div>
     <div class="nav-links">
-      <a href="#home" class="active">Home</a>
-      <a href="#features">Features</a>
-      <a href="#about">About</a>
-      <a href="#contact">Contact</a>
+      <a href="#home" class="active" data-en="Home" data-hi="होम">Home</a>
+      <a href="#features" data-en="Features" data-hi="सुविधाएं">Features</a>
+      <a href="#about" data-en="About" data-hi="हमारे बारे में">About</a>
+      <a href="#contact" data-en="Contact" data-hi="संपर्क करें">Contact</a>
       <button id="langToggle">EN</button>
       <button id="themeToggle"><i class="fas fa-moon"></i></button>
       <button class="get-started" onclick="window.location.href='#features';">Get Started</button>
@@ -173,7 +309,9 @@
       <div class="feature-grid">
         <div class="feature-card">
           <i class="fas fa-seedling"></i>
-          <a href="/crop_recommendation"><h3 data-en="Crop Suggestion" data-hi="फसल सुझाव">Crop Suggestion</h3></a>
+          <a href="/crop_recommendation">
+            <h3 data-en="Crop Suggestion" data-hi="फसल सुझाव">Crop Suggestion</h3>
+          </a>
           <p data-en="Get AI-powered recommendations on which crops to plant based on your soil, climate, and market conditions"
             data-hi="अपनी मिट्टी, जलवायु और बाज़ार की स्थितियों के आधार पर कौन सी फ़सलें लगानी चाहिए, इस पर AI-संचालित सुझाव प्राप्त करें">
             Get AI-powered recommendations on which crops to plant based on your soil, climate, and market conditions
@@ -181,7 +319,9 @@
         </div>
         <div class="feature-card">
           <i class="fas fa-chart-line"></i>
-          <a href="/crop_price_predict"><h3 data-en="Price Prediction" data-hi="मूल्य भविष्यवाणी">Price Prediction</h3></a>
+          <a href="/crop_price_predict">
+            <h3 data-en="Price Prediction" data-hi="मूल्य भविष्यवाणी">Price Prediction</h3>
+          </a>
           <p data-en="Forecast future crop prices using machine learning models that analyze market trends and demand patterns"
             data-hi="मशीन लर्निंग मॉडल का उपयोग करके भविष्य की फसल की कीमतों का पूर्वानुमान करें जो बाजार के रुझान और मांग पैटर्न का विश्लेषण करते हैं">
             Forecast future crop prices using machine learning models that analyze market trends and demand patterns
@@ -189,7 +329,9 @@
         </div>
         <div class="feature-card">
           <i class="fas fa-bug"></i>
-          <a href="/plant_disease"><h3 data-hi="रोग का पता लगाना" data-en="Disease Detection">Disease Detection</h3></a>
+          <a href="/plant_disease">
+            <h3 data-hi="रोग का पता लगाना" data-en="Disease Detection">Disease Detection</h3>
+          </a>
           <p data-en="Identify plant diseases early by uploading photos of your crops for instant AI-powered diagnosis"
             data-hi="
           तत्काल AI-संचालित निदान के लिए अपनी फसलों की तस्वीरें अपलोड करके पौधों की बीमारियों की प्रारंभिक पहचान करें">
@@ -197,8 +339,10 @@
         </div>
         <div class="feature-card">
           <i class="fas fa-cloud-sun"></i>
-          <a href="/weather_forecast"><h3 data-en="Weather Forecast" data-hi="मौसम पूर्वानुमान
-          ">Weather Forecast</h3></a>
+          <a href="/weather_forecast">
+            <h3 data-en="Weather Forecast" data-hi="मौसम पूर्वानुमान
+          ">Weather Forecast</h3>
+          </a>
           <p data-en="Get accurate weather predictions specifically tailored for your farm's location to plan your activities"
             data-hi="
           अपनी गतिविधियों की योजना बनाने के लिए अपने खेत के स्थान के लिए विशेष रूप से तैयार सटीक मौसम पूर्वानुमान प्राप्त करें">
@@ -342,7 +486,71 @@
     </div>
   </div>
 
+  <script>
+document.addEventListener("DOMContentLoaded", function () {
+    const chatbotToggle = document.querySelector(".chatbot-toggle");
+    const chatbotContainer = document.querySelector(".chatbot-container");
+    const closeChat = document.querySelector(".close-chat");
+    const chatMessages = document.querySelector(".chatbot-messages");
+    const chatInput = document.querySelector(".chatbot-input input");
+    const sendButton = document.querySelector(".chatbot-input button");
+
+    function appendMessage(sender, message) {
+        const messageDiv = document.createElement("div");
+        messageDiv.classList.add("message", sender);
+        messageDiv.innerHTML = `<p>${message}</p>`;
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll to the latest message
+    }
+
+    // Function to show the initial welcome message
+    function showWelcomeMessage() {
+        appendMessage("bot", "Hello! Welcome to Krishi Guide. How can I help you?");
+    }
+
+    chatbotToggle.addEventListener("click", () => {
+        chatbotContainer.classList.toggle("hidden");
+        if (!chatbotContainer.classList.contains("hidden")) {
+            showWelcomeMessage(); // Display welcome message when chatbot is opened
+        }
+    });
+
+    closeChat.addEventListener("click", () => {
+        chatbotContainer.classList.add("hidden");
+    });
+
+    function sendMessage() {
+        const userText = chatInput.value.trim();
+        if (!userText) return;
+
+        appendMessage("user", userText);
+        chatInput.value = "";
+
+        fetch("/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: userText })
+        })
+        .then(response => response.json())
+        .then(data => {
+            appendMessage("bot", data.reply);
+        })
+        .catch(error => {
+            appendMessage("bot", "Error connecting to the server.");
+        });
+    }
+
+    sendButton.addEventListener("click", sendMessage);
+    chatInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") sendMessage();
+    });
+});
+
+
+
+  </script>
   <script src="static/script.js"></script>
+
 </body>
 
 </html>
