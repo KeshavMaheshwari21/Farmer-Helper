@@ -1,0 +1,11 @@
+Flask
+flask-cors
+numpy
+pandas
+pickle-mixin
+tensorflow
+Pillow
+google-generativeai
+python-dotenv
+requests
+reportlab

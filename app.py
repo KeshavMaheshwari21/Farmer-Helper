@@ -11,6 +11,9 @@ import google.generativeai as genai
 from dotenv import load_dotenv
 import re
 import requests
+from flask import send_file
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
 
 app = Flask(__name__)
 
@@ -45,10 +48,20 @@ item_images = {
     5: [{'name': 'Pigeonpeas (अरहर/तूर दाल)', 'image': 'images/pigeonpeas.jpg'},{'name': 'Moth Beans (मोठ/मोठ दाल)', 'image': 'images/mothbeans.jpg'},
         {'name': 'Lentil (मसूर दाल)', 'image': 'images/lentil.jpg'},{'name': 'Mango (आम)', 'image': 'images/mango.jpg'}],
     6: [{'name': 'Watermelon (तरबूज)', 'image': 'images/watermelon.jpg'},{'name': 'Muskmelon (खरबूजा)', 'image': 'images/muskmelon.jpg'}],
-    7: [{'name': 'Chickpea (Chickpea)', 'image': 'images/chickpea.jpg'},{'name': 'Kidney Beans (राजमा)', 'image': 'images/kidneybeans.jpg'},
+    7: [{'name': 'Chickpea (चना)', 'image': 'images/chickpea.jpg'},{'name': 'Kidney Beans (राजमा)', 'image': 'images/kidneybeans.jpg'},
         {'name': 'Pigeonpeas (अरहर/तूर दाल)', 'image': 'images/pigeonpeas.jpg'},{'name': 'Lentil (मसूर दाल)', 'image': 'images/lentil.jpg'}]
 }
 
+item_text = {
+    0: 'Pigeonpeas अरहर तूर दाल Moth Beans मोठ मोठ दाल Mung Bean मूंग Black Gram उड़द दाल Lentil मसूर दाल Mango आम Orange संतरा Papaya पपीता',
+    1: 'Maize मक्का/भुट्टा Lentil मसूर दाल Banana केला Papaya पपीता Coconut नारियल Cotton कपास Jute पटसन जूट Coffee कॉफी',
+    2: 'Grapes अंगूर Apple सेब',
+    3: 'Pigeonpeas अरहर तूर दाल Pomegranate अनार Orange संतरा Papaya पपीता Coconut नारियल',
+    4: 'Rice चावल Pigeonpeas अरहर तूर दाल Papaya पपीता Coconut नारियल Jute पटसन जूट Coffee कॉफी',
+    5: 'Pigeonpeas अरहर तूर दाल Moth Beans मोठ मोठ दाल Lentil मसूर दाल Mango आम',
+    6: 'Watermelon तरबूज Muskmelon खरबूजा',
+    7: 'Chickpea चना Kidney Beans राजमा Pigeonpeas अरहर तूर दाल Lentil मसूर दाल'
+}
 # Function to load ML model
 def load_model():
     with open("models/crop_price_model.pkl", "rb") as model_file:
@@ -149,8 +162,10 @@ def submit():
 
     crops = item_images.get(cluster, [{'name': 'Unknown', 'image': 'images/default.jpg'}] * 5)
 
+    text = item_text.get(cluster)
+
     # Pass the predicted cluster to the output page
-    return render_template('crop_recommendation_output.html', crops=crops)
+    return render_template('crop_recommendation_output.html', crops=crops , text = text)
 
 load_dotenv()
 API_KEY = os.getenv("GOOGLE_API_KEY")
@@ -265,6 +280,70 @@ def get_precautions(disease):
 
 
 # Flask Routes
+app.config["UPLOAD_FOLDER"] = "static/uploads"
+
+def generate_pdf(image_path, details, pdf_filename):
+    pdf_path = os.path.join(app.config["UPLOAD_FOLDER"], pdf_filename)
+
+    c = canvas.Canvas(pdf_path, pagesize=letter)
+    width, height = letter
+
+    # Add image
+    img = Image.open(image_path)
+    img_width, img_height = img.size
+    aspect = img_height / img_width
+
+    max_width = 400  # Max width for image
+    max_height = max_width * aspect  # Maintain aspect ratio
+
+    img_x = (width - max_width) / 2
+    img_y = height - max_height - 50  # Leave some space at the top
+    c.drawImage(image_path, img_x, img_y, max_width, max_height)
+
+    # Add text
+    text_y = img_y - 30
+    c.setFont("Helvetica-Bold", 14)
+    c.drawString(100, text_y, f"Disease: {details['disease_en']} ({details['disease_hi']})")
+
+    text_y -= 20
+    c.setFont("Helvetica", 12)
+    c.drawString(100, text_y, "Explanation (English):")
+    text_y -= 15
+    c.setFont("Helvetica", 10)
+    for line in details["explanation_en"].split(". "):
+        c.drawString(100, text_y, line)
+        text_y -= 15
+
+    text_y -= 10
+    c.setFont("Helvetica", 12)
+    c.drawString(100, text_y, "Explanation (Hindi):")
+    text_y -= 15
+    c.setFont("Helvetica", 10)
+    for line in details["explanation_hi"].split(". "):
+        c.drawString(100, text_y, line)
+        text_y -= 15
+
+    text_y -= 10
+    c.setFont("Helvetica", 12)
+    c.drawString(100, text_y, "Precautions (English):")
+    text_y -= 15
+    c.setFont("Helvetica", 10)
+    for line in details["precautions_en"].split(". "):
+        c.drawString(100, text_y, line)
+        text_y -= 15
+
+    text_y -= 10
+    c.setFont("Helvetica", 12)
+    c.drawString(100, text_y, "Precautions (Hindi):")
+    text_y -= 15
+    c.setFont("Helvetica", 10)
+    for line in details["precautions_hi"].split(". "):
+        c.drawString(100, text_y, line)
+        text_y -= 15
+
+    c.save()
+    return pdf_path
+
 @app.route("/plant_disease_output", methods=["GET", "POST"])
 def plant_disease_output():
     if request.method == "POST":
@@ -285,6 +364,10 @@ def plant_disease_output():
         # Get precautions and related details
         details = get_precautions(predicted_disease)
 
+        # Generate PDF
+        pdf_filename = f"{predicted_disease}_report.pdf"
+        pdf_path = generate_pdf(filepath, details, pdf_filename)
+
         return render_template(
             "plant_disease_output.html",
             image=filepath,
@@ -294,9 +377,14 @@ def plant_disease_output():
             explanation_hi=details["explanation_hi"],
             precautions_en=details["precautions_en"],
             precautions_hi=details["precautions_hi"],
+            pdf_path=pdf_filename,  # Pass the PDF filename to the template
         )
 
     return render_template("plant_disease.html")
+
+@app.route("/download/<filename>")
+def download_file(filename):
+    return send_file(os.path.join(app.config["UPLOAD_FOLDER"], filename), as_attachment=True)
 
 @app.route('/weather_forecast')
 def weather_forecast():

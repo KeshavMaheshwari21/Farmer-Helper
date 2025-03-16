@@ -65,17 +65,17 @@
 </head>
 <body class="light">
     <nav>
-      <div class="logo">KrishiGuide</div>
-      <div class="nav-links">
-        <a href="#home" class="active">Home</a>
-        <a href="#features">Features</a>
-        <a href="#about">About</a>
-        <a href="#contact">Contact</a>
-        <button id="langToggle">EN</button>
-        <button id="themeToggle"><i class="fas fa-moon"></i></button>
-        <button class="get-started" onclick="window.location.href='#features';">Get Started</button>
-      </div>
-    </nav>
+        <div class="logo">KrishiGuide</div>
+        <div class="nav-links">
+          <a href="#home" class="active" data-en="Home" data-hi="होम">Home</a>
+          <a href="#features" data-en="Features" data-hi="सुविधाएं">Features</a>
+          <a href="#about" data-en="About" data-hi="हमारे बारे में">About</a>
+          <a href="#contact" data-en="Contact" data-hi="संपर्क करें">Contact</a>
+          <button id="langToggle">EN</button>
+          <button id="themeToggle"><i class="fas fa-moon"></i></button>
+          <button class="get-started"  data-hi="शुरू करें" data-en="Get Started" onclick="window.location.href='/';">Get Started</button>
+        </div>
+      </nav>
     <h1 style="margin-top: 120px;text-align: center;" class="title" data-en="Meet Our Developers" data-hi="हमारे डेवलपर्स से मिलें">Meet Our Developers</h1>
     <div class="team-container" style="margin-bottom: 100px;">
         <div class="team-member">
@@ -119,8 +119,8 @@
           </div>
           <div class="footer-section">
             <h3 data-hi="
-            त्वरित सम्पक" data-en="Quick Links">Quick Links</h3>
-            <a href="/" data-en="Home" data-hi="होम">Home</a>
+              त्वरित सम्पक" data-en="Quick Links">Quick Links</h3>
+            <a href="{{ url_for('index') }}" data-en="Home" data-hi="होम">Home</a>
             <a href="#features" data-en="Features" data-hi="सुविधाएं">Features</a>
             <a href="#about" data-en="About" data-hi="हमारे बारे में">About</a>
             <a href="#contact" data-en="Contact" data-hi="संपर्क करें">Contact</a>
@@ -134,7 +134,7 @@
             ">Price Prediction</a>
             <a href="/plant_disease" data-en="Disease Detection" data-hi="रोग का पता लगाना
             ">Disease Detection</a>
-            <a href="#features" data-en="Weather Forecast" data-hi="मौसम पूर्वानुमान
+            <a href="/weather_forecast" data-en="Weather Forecast" data-hi="मौसम पूर्वानुमान
             ">Weather Forecast</a>
           </div>
           <div class="footer-section">
@@ -148,12 +148,14 @@
               <a href="#"><i class="fab fa-linkedin"></i></a>
             </div>
           </div>
+          
         </div>
         <div class="footer-bottom">
           <p data-en="&copy; 2025 KrishiGuide. All rights reserved." data-hi="&copy; 
           2025 कृषिगाइड। सभी अधिकार सुरक्षित।">&copy; 2025 KrishiGuide. All rights reserved.</p>
         </div>
       </footer>
+
     
       <script src="static/script.js"></script>
     </body>

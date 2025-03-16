@@ -223,7 +223,7 @@
             background-color: #218838;
         }
 
-        
+
 
         /* Responsive */
         @media (max-width: 768px) {
@@ -245,6 +245,11 @@
                 height: 50px;
             }
         }
+        .speaker-icon {
+            cursor: pointer;
+            font-size: 24px;
+            margin-left: 10px;
+        }
     </style>
 </head>
 
@@ -254,13 +259,13 @@
         <nav>
             <div class="logo">KrishiGuide</div>
             <div class="nav-links">
-                <a href="{{ url_for('index') }}" class="active">Home</a>
-                <a href="#features">Features</a>
-                <a href="#about">About</a>
-                <a href="#contact">Contact</a>
+                <a href="#home" class="active" data-en="Home" data-hi="होम">Home</a>
+                <a href="#features" data-en="Features" data-hi="सुविधाएं">Features</a>
+                <a href="#about" data-en="About" data-hi="हमारे बारे में">About</a>
+                <a href="#contact" data-en="Contact" data-hi="संपर्क करें">Contact</a>
                 <button id="langToggle">EN</button>
                 <button id="themeToggle"><i class="fas fa-moon"></i></button>
-                <button class="get-started">Get Started</button>
+                <button class="get-started"  data-hi="शुरू करें" data-en="Get Started" onclick="window.location.href='/';">Get Started</button>
             </div>
         </nav>
 
@@ -269,14 +274,19 @@
             <h1 data-en="You can Grow" data-hi="आप इन्हें उगा सकते हैं">You can Grow</h1>
 
             <!-- Main Crop Slideshow -->
-            <div class="crops-container">
+            <div class="crops-container" style="margin-top: 20px;">
                 {% for crop in crops %}
                 <div class="crop-item">
                     <img src="{{ url_for('static', filename=crop.image) }}" alt="{{ crop.name }}" class="crop-image">
-                    <div class="crop-name">{{ crop.name }}</div>
+                    <div class="crop-name">{{ crop.name }}
+                    </div>
                 </div>
                 {% endfor %}
             </div>
+
+            <span class="speaker-icon" onclick="speakText('{{ text }}')">
+                <i class="fas fa-volume-up"></i>
+            </span>
 
             <!-- Mini Crop Gallery -->
             <div class="mini-gallery">
@@ -300,23 +310,24 @@
                 </div>
                 <div class="footer-section">
                     <h3 data-hi="
-              त्वरित सम्पक" data-en="Quick Links">Quick Links</h3>
-                    <a href="{{ url_for('index') }}" data-en="Home" data-hi="होम">Home</a>
-                    <a href="#features" data-en="Features" data-hi="सुविधाएं">Features</a>
-                    <a href="#about" data-en="About" data-hi="हमारे बारे में">About</a>
-                    <a href="#contact" data-en="Contact" data-hi="संपर्क करें">Contact</a>
-                </div>
-                <div class="footer-section">
+                      त्वरित सम्पक" data-en="Quick Links">Quick Links</h3>
+                      <a href="{{ url_for('index') }}" data-en="Home" data-hi="होम">Home</a>
+                      <a href="#features" data-en="Features" data-hi="सुविधाएं">Features</a>
+                      <a href="#about" data-en="About" data-hi="हमारे बारे में">About</a>
+                      <a href="#contact" data-en="Contact" data-hi="संपर्क करें">Contact</a>
+                      <a href="/developers" data-en="Developers" data-hi="डेवलपर्स">Developers</a>
+                  </div>
+                  <div class="footer-section">
                     <h3 data-en="Features" data-hi="सुविधाएं">Features</h3>
                     <a href="/crop_recommendation" data-en="Crop Suggestion" data-hi="फसल सुझाव
-              ">Crop Suggestion</a>
+                    ">Crop Suggestion</a>
                     <a href="/crop_price_predict" data-en="Price Prediction" data-hi="मूल्य भविष्यवाणी
-              ">Price Prediction</a>
-                    <a href="#features" data-en="Disease Detection" data-hi="रोग का पता लगाना
-              ">Disease Detection</a>
-                    <a href="#features" data-en="Weather Forecast" data-hi="मौसम पूर्वानुमान
-              ">Weather Forecast</a>
-                </div>
+                    ">Price Prediction</a>
+                    <a href="/plant_disease" data-en="Disease Detection" data-hi="रोग का पता लगाना
+                    ">Disease Detection</a>
+                    <a href="/weather_forecast" data-en="Weather Forecast" data-hi="मौसम पूर्वानुमान
+                    ">Weather Forecast</a>
+                  </div>
                 <div class="footer-section">
                     <h3 data-en="Contact" data-hi="संपर्क करें">Contact</h3>
                     <p>info@krishiguide.com</p>
@@ -336,6 +347,25 @@
         </footer>
 
         <script src="static/script.js"></script>
+
+        <script>
+            function detectLanguage(text) {
+                // Basic detection: if text contains Hindi characters, assume it's Hindi
+                const hindiRegex = /[\u0900-\u097F]/;
+                return hindiRegex.test(text) ? "hi-IN" : "en-IN";
+            }
+    
+            function speakText(text) {
+                let lang = detectLanguage(text); // Detect the language
+                
+                let speech = new SpeechSynthesisUtterance(text);
+                speech.lang = lang;  // Use the detected language
+                speech.rate = 0.68;  // Normal speed
+                speech.volume = 1; // Max volume
+    
+                window.speechSynthesis.speak(speech);
+            }
+        </script>
 
         <script>
             // Slideshow Animation for Crops
