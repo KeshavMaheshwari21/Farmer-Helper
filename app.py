@@ -53,12 +53,12 @@ item_images = {
 }
 
 item_text = {
-    0: 'Pigeonpeas अरहर तूर दाल Moth Beans मोठ मोठ दाल Mung Bean मूंग Black Gram उड़द दाल Lentil मसूर दाल Mango आम Orange संतरा Papaya पपीता',
+    0: 'Pigeonpeas अरहर तूर दाल Moth Beans मोठ  दाल Mung Bean मूंग Black Gram उड़द दाल Lentil मसूर दाल Mango आम Orange संतरा Papaya पपीता',
     1: 'Maize मक्का/भुट्टा Lentil मसूर दाल Banana केला Papaya पपीता Coconut नारियल Cotton कपास Jute पटसन जूट Coffee कॉफी',
     2: 'Grapes अंगूर Apple सेब',
     3: 'Pigeonpeas अरहर तूर दाल Pomegranate अनार Orange संतरा Papaya पपीता Coconut नारियल',
     4: 'Rice चावल Pigeonpeas अरहर तूर दाल Papaya पपीता Coconut नारियल Jute पटसन जूट Coffee कॉफी',
-    5: 'Pigeonpeas अरहर तूर दाल Moth Beans मोठ मोठ दाल Lentil मसूर दाल Mango आम',
+    5: 'Pigeonpeas अरहर तूर दाल Moth Beans मोठ दाल Lentil मसूर दाल Mango आम',
     6: 'Watermelon तरबूज Muskmelon खरबूजा',
     7: 'Chickpea चना Kidney Beans राजमा Pigeonpeas अरहर तूर दाल Lentil मसूर दाल'
 }
@@ -73,8 +73,8 @@ def load_encoder():
         return pickle.load(encoder_file)
 
 # Load the trained model and encoder
-model = load_model()
-encoder = load_encoder()
+price_model = load_model()
+price_encoder = load_encoder()
 
 @app.route('/')
 def index():
@@ -126,8 +126,8 @@ def predict():
 
     # Transform the new data using the encoder
     try:
-        new_data_encoded = encoder.transform(new_data)
-        predicted_price = model.predict(new_data_encoded)[0]
+        new_data_encoded = price_encoder.transform(new_data)
+        predicted_price = price_model.predict(new_data_encoded)[0]
         return jsonify({'predicted_price': f"₹{predicted_price:.2f}"})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
