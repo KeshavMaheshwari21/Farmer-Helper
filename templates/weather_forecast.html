@@ -152,6 +152,11 @@
             </div>
 
             <div class="forecast-container" style="margin-top: 40px;margin-bottom: 40px;"></div>
+
+            <div class="recommendation-container" style="border: 1px solid #ccc; padding: 20px; margin-top: 20px; text-align: center;border-radius: 10px;">
+                <h1 data-en="Farming Recommendations" data-hi="कृषि सिफारिशें" style="margin-bottom: 10px;">Farming Recommendations</h1>
+                <p class="recommendation" data-en="Fetching recommendations..." data-hi="अनुशंसाएं प्राप्त की जा रही हैं...">Fetching recommendations...</p>
+            </div>
         </div>
 </body>
 </main>
@@ -202,6 +207,78 @@
 </footer>
 
 <script src="static/script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    async function getRecommendation(weather) {
+    const apiKey = "AIzaSyCdHvM6djoFfXcAHcfxrPH5on6d7fZ5cqA"; // Replace with your actual API key
+    const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey;
+
+    const requestData = {
+        contents: [{ parts: [{ text: `Provide precise farming recommendations based on the weather for the farmer: ${weather}. 
+            
+            Format the response exactly like this:
+            
+            English: <recommendation_english>
+            <br>
+            हिन्दी: <recommendation_hindi>
+            
+            Ensure left-aligned formatting for readability.` }] }]
+    };
+
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(requestData)
+        });
+
+        const data = await response.json();
+
+        if (data.candidates && data.candidates.length > 0) {
+            const responseText = data.candidates[0].content.parts[0].text;
+            const sections = responseText.split("\n\n");
+            
+            let output = "";
+            sections.forEach((section) => {
+                if (section.trim()) {
+                    output += `<p>${section.trim()}</p>`;
+                }
+            });
+
+            document.querySelector(".recommendation").innerHTML = output;
+        } else {
+            document.querySelector(".recommendation").innerHTML = "No recommendation found.";
+        }
+    } catch (error) {
+        console.error("Error fetching recommendation:", error);
+        document.querySelector(".recommendation").innerHTML = "Error fetching recommendation.";
+    }
+}
+
+
+
+    
+    function updateWeather(data) {
+        document.querySelector(".city").textContent = data.city;
+        document.querySelector(".temp").textContent = `${data.temp}°C`;
+        document.querySelector(".desc").textContent = data.desc;
+        document.querySelector(".wind").textContent = `Wind Speed: ${data.wind} m/s`;
+        document.querySelector(".humidity").textContent = `Humidity: ${data.humidity}%`;
+        
+        getRecommendation(data.desc);
+    }
+    
+    document.addEventListener("DOMContentLoaded", () => {
+        const sampleWeather = {
+            city: "Delhi",
+            temp: 30,
+            desc: "Sunny",
+            wind: 5,
+            humidity: 40
+        };
+        updateWeather(sampleWeather);
+    });
+</script>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         if (navigator.geolocation) {

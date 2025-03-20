@@ -14,6 +14,7 @@ import requests
 from flask import send_file
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
+import time
 
 app = Flask(__name__)
 
@@ -33,18 +34,18 @@ item_images = {
     0: [{'name': 'Pigeonpeas (अरहर/तूर दाल)', 'image': 'images/pigeonpeas.jpg'},{'name': 'Moth Beans (मोठ/मोठ दाल)', 'image': 'images/mothbeans.jpg'},
         {'name': 'Mung Bean (मूंग)', 'image': 'images/mungbean.jpg'},{'name': 'Black Gram (उड़द दाल)', 'image': 'images/blackgram.jpg'},
         {'name': 'Lentil (मसूर दाल)', 'image': 'images/lentil.jpg'},{'name': 'Mango (आम)', 'image': 'images/mango.jpg'},
-        {'name': 'Orange (संतरा)', 'image': 'images/orange.jpg'},{'name': 'Papaya (पपीता)', 'image': 'images/papaya.jpg'}],
+        {'name': 'Orange (संतरा)', 'image': 'images/orange.jpg'},{'name': 'Papaya (पपीता)', 'image': 'images/papaya.jpeg'}],
     1: [{'name': 'Maize (मक्का/भुट्टा)', 'image': 'images/maize.jpg'},{'name': 'Lentil (मसूर दाल)', 'image': 'images/lentil.jpg'},
-        {'name': 'Banana (केला)', 'image': 'images/banana.jpg'},{'name': 'Papaya (पपीता)', 'image': 'images/papaya.jpg'},
+        {'name': 'Banana (केला)', 'image': 'images/banana.jpg'},{'name': 'Papaya (पपीता)', 'image': 'images/papaya.jpeg'},
         {'name': 'Coconut (नारियल)', 'image': 'images/coconut.jpg'},{'name': 'Cotton (कपास)', 'image': 'images/cotton.jpg'},
-        {'name': 'Jute (पटसन/जूट)', 'image': 'images/jute.jpg'},{'name': 'Coffee (कॉफी)', 'image': 'images/coffee.jpg'}],
+        {'name': 'Jute (पटसन/जूट)', 'image': 'images/jute.jpg'},{'name': 'Coffee (कॉफी)', 'image': 'images/coffee.jpeg'}],
     2: [{'name': 'Grapes (अंगूर)', 'image': 'images/grapes.jpg'},{'name': 'Apple (सेब)', 'image': 'images/apple.jpg'}],
     3: [{'name': 'Pigeonpeas (अरहर/तूर दाल)', 'image': 'images/pigeonpeas.jpg'},{'name': 'Pomegranate (अनार)', 'image': 'images/pomegranate.jpg'},
-        {'name': 'Orange (संतरा)', 'image': 'images/orange.jpg'},{'name': 'Papaya (पपीता)', 'image': 'images/papaya.jpg'},
+        {'name': 'Orange (संतरा)', 'image': 'images/orange.jpg'},{'name': 'Papaya (पपीता)', 'image': 'images/papaya.jpeg'},
         {'name': 'Coconut (नारियल)', 'image': 'images/coconut.jpg'}],
-    4: [{'name': 'Rice (चावल)', 'image': 'images/rice.jpg'},{'name': 'Pigeonpeas (अरहर/तूर दाल)', 'image': 'images/pigeonpeas.jpg'},
-        {'name': 'Papaya (पपीता)', 'image': 'images/papaya.jpg'},{'name': 'Coconut (नारियल)', 'image': 'images/coconut.jpg'},
-        {'name': 'Jute (पटसन/जूट)', 'image': 'images/jute.jpg'},{'name': 'Coffee (कॉफी)', 'image': 'images/coffee.jpg'}],
+    4: [{'name': 'Rice (चावल)', 'image': 'images/rice.jpeg'},{'name': 'Pigeonpeas (अरहर/तूर दाल)', 'image': 'images/pigeonpeas.jpg'},
+        {'name': 'Papaya (पपीता)', 'image': 'images/papaya.jpeg'},{'name': 'Coconut (नारियल)', 'image': 'images/coconut.jpg'},
+        {'name': 'Jute (पटसन/जूट)', 'image': 'images/jute.jpg'},{'name': 'Coffee (कॉफी)', 'image': 'images/coffee.jpeg'}],
     5: [{'name': 'Pigeonpeas (अरहर/तूर दाल)', 'image': 'images/pigeonpeas.jpg'},{'name': 'Moth Beans (मोठ/मोठ दाल)', 'image': 'images/mothbeans.jpg'},
         {'name': 'Lentil (मसूर दाल)', 'image': 'images/lentil.jpg'},{'name': 'Mango (आम)', 'image': 'images/mango.jpg'}],
     6: [{'name': 'Watermelon (तरबूज)', 'image': 'images/watermelon.jpg'},{'name': 'Muskmelon (खरबूजा)', 'image': 'images/muskmelon.jpg'}],
@@ -452,21 +453,47 @@ genai.configure(api_key="AIzaSyCdHvM6djoFfXcAHcfxrPH5on6d7fZ5cqA")  # Replace wi
 
 model = genai.GenerativeModel("gemini-1.5-flash")
 
+conversation_history = []
+last_message_time = time.time()
+
 @app.route("/chat", methods=["POST"])
 def chat():
-    user_message = request.json.get("message", "").strip()
+    global conversation_history, last_message_time
 
+    user_message = request.json.get("message", "").strip()
+    
     if not user_message:
         return jsonify({"reply": "Please enter a message."})
 
+    # Auto-clear history if inactive for 5 minutes (300 seconds)
+    current_time = time.time()
+    if current_time - last_message_time > 300:
+        conversation_history.clear()
+
+    last_message_time = current_time  # Update timestamp
+
+    # Add user message to conversation history
+    conversation_history.append({"role": "user", "content": user_message})
+
+    # Define the prompt with history
+    prompt = f"Conversation history: {conversation_history}. Reply briefly in the same tone and language as '{user_message}'. If explanation is needed, keep it short and related to farming. If unrelated, respond with 'Please enter a farming-related prompt.'"
+
     try:
-        response = model.generate_content(user_message)
-        print(response)
-        bot_reply = response.text.strip() if response.text else "Sorry, I couldn't understand that."
+        # Call Gemini model to generate response
+        response = model.generate_content(prompt)
+
+        if response and hasattr(response, "text"):
+            bot_reply = response.text.strip()
+        else:
+            bot_reply = "Sorry, I couldn't understand that."
+
+        # Add bot response to conversation history
+        conversation_history.append({"role": "assistant", "content": bot_reply})
 
         return jsonify({"reply": bot_reply})
     
     except Exception as e:
+        print(f"Error: {e}")  # Log the error for debugging
         return jsonify({"reply": "Error processing request."})
 
 if __name__ == '__main__':

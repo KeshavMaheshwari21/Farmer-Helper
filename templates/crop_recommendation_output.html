@@ -164,8 +164,8 @@
         }
 
         .crop-image {
-            width: 180px;
-            height: 180px;
+            width: 190px;
+            height: 190px;
             border-radius: 50%;
             border: 4px solid #28a745;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -251,6 +251,75 @@
             margin-left: 10px;
         }
     </style>
+
+<style>
+    .grow-box {
+        margin-top: 100px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+    }
+
+    .crop-container {
+        text-align: center;
+    }
+
+    #main-crop-image {
+        width: 250px;
+        height: 220px;
+        object-fit: cover;
+        display: block;
+        margin: 0 auto;
+        border-radius: 20px;
+    }
+
+    .crop-name {
+        font-size: 24px;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+
+    .speaker-icon {
+        font-size: 30px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
+    .mini-gallery {
+        margin-top: 20px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .mini-crop {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        cursor: pointer;
+        border-radius: 10px;
+    }
+
+    @media (max-width: 768px) {
+        #main-crop-image {
+            width: 90%;
+            height: auto;
+        }
+        .crop-name {
+            font-size: 20px;
+        }
+        .mini-gallery {
+            gap: 5px;
+        }
+        .mini-crop {
+            width: 60px;
+            height: 60px;
+        }
+    }
+</style>
+
 </head>
 
 <body>
@@ -270,33 +339,29 @@
         </nav>
 
         <!-- "You Can Grow" Section -->
-        <div class="grow-box" style="margin-top: 100px;">
+        <div class="grow-box">
             <h1 data-en="You can Grow" data-hi="आप इन्हें उगा सकते हैं">You can Grow</h1>
-
-            <!-- Main Crop Slideshow -->
-            <div class="crops-container" style="margin-top: 20px;">
-                {% for crop in crops %}
-                <div class="crop-item">
-                    <img src="{{ url_for('static', filename=crop.image) }}" alt="{{ crop.name }}" class="crop-image">
-                    <div class="crop-name">{{ crop.name }}
-                    </div>
+        
+            <!-- Main Crop Display -->
+            <div class="crop-container" id="main-crop-display">
+                <img id="main-crop-image" src="{{ url_for('static', filename=crops[0].image) }}" alt="{{ crops[0].name }}" class="crop-image">
+                <div id="main-crop-name" class="crop-name">
+                    {{ crops[0].name }}
                 </div>
-                {% endfor %}
             </div>
-
-            <span class="speaker-icon" onclick="speakText('{{ text }}')">
+        
+            <!-- Speaker Icon -->
+            <span class="speaker-icon" onclick="speakText(document.getElementById('main-crop-name').innerText)">
                 <i class="fas fa-volume-up"></i>
             </span>
-
+        
             <!-- Mini Crop Gallery -->
             <div class="mini-gallery">
                 {% for crop in crops %}
-                <img src="{{ url_for('static', filename=crop.image) }}" alt="{{ crop.name }}" class="mini-crop"
-                    onclick="showSpecificCrop({{ loop.index0 }})">
+                <img src="{{ url_for('static', filename=crop.image) }}" alt="{{ crop.name }}" class="mini-crop" onclick="updateMainCrop('{{ url_for('static', filename=crop.image) }}', '{{ crop.name }}')">
                 {% endfor %}
             </div>
         </div>
-
         <!-- Back Button -->
         <a href="/" class="btn-primary" data-en="Back to Home" data-hi="होम वापस जाए">Back to Home</a>
 
@@ -347,6 +412,13 @@
         </footer>
 
         <script src="static/script.js"></script>
+
+        <script>
+            function updateMainCrop(imageSrc, cropName) {
+                document.getElementById('main-crop-image').src = imageSrc;
+                document.getElementById('main-crop-name').innerText = cropName;
+            }
+        </script>
 
         <script>
             function detectLanguage(text) {
