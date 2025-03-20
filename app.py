@@ -476,7 +476,7 @@ def chat():
     conversation_history.append({"role": "user", "content": user_message})
 
     # Define the prompt with history
-    prompt = f"Conversation history: {conversation_history}. Reply briefly in the same tone and language as '{user_message}'. If explanation is needed, keep it short and related to farming. If unrelated, respond with 'Please enter a farming-related prompt.'"
+    prompt = f"Conversation history: {conversation_history}. Reply briefly in the same tone and language as '{user_message}'. If explanation is needed, keep it short and to point and related to farming. If unrelated, respond with 'Please enter a farming-related prompt.'"
 
     try:
         # Call Gemini model to generate response
