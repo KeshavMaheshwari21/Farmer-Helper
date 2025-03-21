@@ -5,11 +5,8 @@ Farmer Helper is an AI-powered web application designed to assist farmers with s
 
 ## 🚀 Features
 - **Crop Recommendation:** Get AI-powered suggestions for the best crops to grow based on soil type, climate conditions, and historical data. 🌾
-- **Pest Detection & Prevention:** Upload images to detect potential pest threats and receive AI-driven solutions. 🐛🛑
 - **Weather Forecasting:** Real-time weather updates and future predictions to help plan farming activities. ☀️🌧️
-- **Fertilizer Suggestion:** Optimize fertilizer usage based on soil health and crop type. 🧪🌱
-- **Yield Prediction:** AI-based models estimate potential crop yield for better planning. 📊📈
-- **Crop Price Prediction:** Forecast future crop prices based on market trends, weather conditions, and historical data. 💰📉📈
+- **Crop Price Prediction:** Forecast future crop prices based on market trends, weather conditions, and historical data. 💰
 - **Plant Disease Report:** Upload images of affected crops to receive AI-generated reports on potential plant diseases and recommended treatments. 🏥🌿
 - **Conversational Chatbot:** Interact with an AI chatbot that responds in the tone of your prompt for a more personalized experience. 🗨️🤖
 - **Hindi & English Toggle:** Easily switch between Hindi and English for seamless language understanding. 🔄🗣️
