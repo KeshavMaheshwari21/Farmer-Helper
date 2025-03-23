@@ -650,5 +650,35 @@ def pesticide_output():
         return render_template("pesticide_output.html", image=filepath, **details, pdf_path=pdf_filename)
     return render_template("pesticide.html")
 
+pesticide_df = pd.read_csv('models/Pest & Pesticide/Pesticides.csv')
+
+@app.route('/pesticide_suggestion')
+def pesticide_suggestion():
+    """Returns unique pest names for dropdown selection"""
+    pest_name = pesticide_df['Pest Name'].dropna().unique().tolist()
+    return render_template('pesticide_suggestion.html', pest_names=pest_name)
+
+# Function to get pesticides for a given pest name
+def get_pesticides(pest_name):
+    row = pesticide_df.loc[pesticide_df["Pest Name"] == pest_name, "Most Commonly Used Pesticides"]
+    return row.values[0] if not row.empty else "Pest not found"
+
+@app.route('/pesticide_suggestion_output', methods=['POST'])
+def pesticide_suggestion_output():
+    """Returns suggested pesticides based on pest name"""
+    try:
+        data = request.json
+        pest_name = data.get('pest_name')  # Corrected key
+
+        if not pest_name:
+            return jsonify({'error': 'Pest name is required'}), 400
+
+        pesticides_name = get_pesticides(pest_name)
+        print(pesticides_name)
+        return jsonify({'Pesticides': f"{pest_name}: {pesticides_name}"})
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 if __name__ == '__main__':
     app.run(debug=True)

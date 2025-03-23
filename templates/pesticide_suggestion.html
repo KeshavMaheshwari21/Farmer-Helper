@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commodity Price Prediction</title>
+    <link rel="stylesheet" href="static/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .form-section {
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-section h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        select {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        /* Centered and larger result */
+        .result-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #result {
+            display: none;
+            font-size: 24px;
+            font-weight: bold;
+            color: #d35400;
+            background: #fef5e7;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            width: fit-content;
+            margin: auto;
+        }
+
+        .form-section button[type="submit"] {
+            margin-top: 20px;
+            padding: 10px;
+            background: #28a745;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .form-section button[type="submit"]:hover {
+            background: #218838;
+        }
+
+        .hero-image img {
+            width: 100%;
+            max-width: 600px;
+            border-radius: 10px;
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+        }
+
+        .hero-image img:hover {
+            transform: rotate(5deg) scale(1.1);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+
+<body class="light">
+    <nav>
+        <div class="logo">KrishiGuide</div>
+        <div class="nav-links">
+            <a href="#home" class="active" data-en="Home" data-hi="होम">Home</a>
+            <a href="#features" data-en="Features" data-hi="सुविधाएं">Features</a>
+            <a href="#about" data-en="About" data-hi="हमारे बारे में">About</a>
+            <a href="#contact" data-en="Contact" data-hi="संपर्क करें">Contact</a>
+            <button id="langToggle">EN</button>
+            <button id="themeToggle"><i class="fas fa-moon"></i></button>
+            <button class="get-started" data-hi="शुरू करें" data-en="Get Started"
+                onclick="window.location.href='/';">Get Started</button>
+        </div>
+    </nav>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <span class="tag">AI-Powered Farming</span>
+                <h1 class="title" data-en="Pesticide Suggestion" data-hi="कीटनाशक सुझाव">Pesticide Suggestion</h1>
+                <p class="subtitle"
+                    data-en="Use AI-powered tools to get the best pesticide recommendations for protecting your crops from pests. Ensure healthier yields with precise suggestions."
+                    data-hi="कीटों से अपनी फसलों की रक्षा के लिए सर्वश्रेष्ठ कीटनाशक सुझाव प्राप्त करने के लिए AI-संचालित टूल्स का उपयोग करें। सटीक सुझावों के साथ स्वस्थ उपज सुनिश्चित करें।">
+                    Use AI-powered tools to get the best pesticide recommendations for protecting your crops from pests.
+                    Ensure healthier yields with precise suggestions.
+                </p>
+
+
+
+            </div>
+            <div class="hero-image">
+                <img src="static/images/pesticide_suggestion.jpg" alt="Farmer using technology">
+            </div>
+        </section>
+
+        <div class="container">
+            <div class="form-section">
+                <h2 data-en="Get Pesticide Suggestion" data-hi="कीटनाशक सुझाव प्राप्त करें
+        ">Get Pesticide Suggestion</h2>
+                <form id="predictionForm">
+                    <label data-en="Select Pest:" data-hi="कीट का चयन करें
+          :">Select Pest:</label>
+                    <select id="pest_name" name="pest_name">
+                        <option value="">-- Select Pest --</option>
+                        {% for pest_name in pest_names %}
+                        <option value="{{ pest_name }}">{{ pest_name }}</option>
+                        {% endfor %}
+                    </select>
+
+
+                    <button type="submit">Submit</button>
+                </form>
+                
+            </div>
+            <div class="result-container" style="margin-top: 20px;margin-bottom: 20px;">
+                <div id="result"></div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>KrishiGuide</h3>
+                <p data-en="Smart farming solutions powered by AI" data-hi="AI द्वारा संचालित स्मार्ट कृषि समाधान">Smart
+                    farming
+                    solutions powered by AI</p>
+            </div>
+            <div class="footer-section">
+                <h3 data-hi="
+          त्वरित सम्पक" data-en="Quick Links">Quick Links</h3>
+                <a href="{{ url_for('index') }}" data-en="Home" data-hi="होम">Home</a>
+                <a href="#features" data-en="Features" data-hi="सुविधाएं">Features</a>
+                <a href="#about" data-en="About" data-hi="हमारे बारे में">About</a>
+                <a href="#contact" data-en="Contact" data-hi="संपर्क करें">Contact</a>
+                <a href="/developers" data-en="Developers" data-hi="डेवलपर्स">Developers</a>
+            </div>
+            <div class="footer-section">
+                <h3 data-en="Features" data-hi="सुविधाएं">Features</h3>
+                <a href="/crop_recommendation" data-en="Crop Suggestion" data-hi="फसल सुझाव
+        ">Crop Suggestion</a>
+                <a href="/crop_price_predict" data-en="Price Prediction" data-hi="मूल्य भविष्यवाणी
+        ">Price Prediction</a>
+                <a href="/plant_disease" data-en="Disease Detection" data-hi="रोग का पता लगाना
+        ">Disease Detection</a>
+                <a href="/weather_forecast" data-en="Weather Forecast" data-hi="मौसम पूर्वानुमान
+        ">Weather Forecast</a>
+            </div>
+            <div class="footer-section">
+                <h3 data-en="Contact" data-hi="संपर्क करें">Contact</h3>
+                <p>info@krishiguide.com</p>
+                <p>+91 98765 43210</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p data-en="&copy; 2025 KrishiGuide. All rights reserved." data-hi="&copy; 
+        2025 कृषिगाइड। सभी अधिकार सुरक्षित।">&copy; 2025 KrishiGuide. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="static/script.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Language toggle logic
+            $("#languageToggle").click(function () {
+                var isEnglish = $(this).text() === "EN";
+                $(this).text(isEnglish ? "हिं" : "EN");
+
+                $("[data-en]").each(function () {
+                    var text = isEnglish ? $(this).attr("data-hi") : $(this).attr("data-en");
+                    $(this).text(text);
+                });
+            });
+
+            // Handle form submission
+            $("#predictionForm").submit(function (event) {
+                event.preventDefault();
+
+                let pestName = $("#pest_name").val();  // Ensure the input field has the correct ID
+
+                $.ajax({
+                    url: "/pesticide_suggestion_output",
+                    type: "POST",
+                    contentType: "application/json",  // Send JSON data
+                    data: JSON.stringify({ "pest_name": pestName }), // Correct key matching Flask
+                    success: function (response) {
+                        $("#result").text(response.Pesticides).fadeIn();  // Fix response key
+                    },
+                    error: function (xhr, status, error) {
+                        $("#result").text("Error: " + xhr.responseJSON.error).fadeIn();  // Show error messages
+                    }
+                });
+            });
+
+        });
+    </script>
+</body>
+
+</html>
