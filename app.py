@@ -495,6 +495,160 @@ def chat():
     except Exception as e:
         print(f"Error: {e}")  # Log the error for debugging
         return jsonify({"reply": "Error processing request."})
+    
+@app.route('/pesticide')
+def pesticide():
+    return render_template('pesticide.html')
+
+# Pesticide Detection
+
+# Load environment variables
+load_dotenv()
+API_KEY = os.getenv("GOOGLE_API_KEY")
+genai.configure(api_key=API_KEY)
+
+# Load the pre-trained model
+Pesticide_model_path = "models/Pest & Pesticide/plant_pest_prediction_model.h5"
+pesticide_model = tf.keras.models.load_model(Pesticide_model_path)
+
+# Load class indices
+with open("models/Pest & Pesticide/class_indices_pest.json", "r") as f:
+    class_indices_pest = json.load(f)
+class_indices_pest = {int(k): v for k, v in class_indices_pest.items()}
+
+# Function to preprocess the image
+def pesticide_load_and_preprocess_image(image_path, target_size=(224, 224)):
+    img = Image.open(image_path)
+    img = img.resize(target_size)
+    img_array = np.array(img) / 255.0
+    img_array = np.expand_dims(img_array, axis=0)
+    return img_array
+
+# Function to predict plant disease
+def pesticide_predict_image_class(image_path):
+    preprocessed_img = pesticide_load_and_preprocess_image(image_path)
+    predictions = pesticide_model.predict(preprocessed_img)
+    predicted_class_index = np.argmax(predictions, axis=1)[0]
+    predicted_class_name = class_indices_pest.get(predicted_class_index, "Unknown Pest")
+    return predicted_class_name
+
+# Function to generate precautions using Gemini AI with error handling
+def pesticide_get_precautions(pest_name):
+    prompt = f"""
+    Provide a detailed explanation and precautions for the plant pest '{pest_name}' in both English and Hindi.
+
+    **Format the response exactly like this:**
+    
+    Disease in English: <pest_name_english>
+    Disease in Hindi: <pest_name_hindi>
+    Explanation in English: <explanation_english>
+    Explanation in Hindi: <explanation_hindi>
+    Precautions in English: <precautions_english>
+    Precautions in Hindi: <precautions_hindi>
+    Suggested Pesticides in English: <suggested_pesticide_english>
+    Suggested Pesticides in Hindi: <suggested_pesticide_hindi>
+    """
+
+    try:
+        model_gemini = genai.GenerativeModel("gemini-1.5-flash")
+        response = model_gemini.generate_content(prompt)
+        
+        if not response or not response.text:
+            raise ValueError("Empty response from Gemini AI.")
+
+        # 🛠 Print the full raw response for debugging
+        print("\n=== Gemini AI Raw Response ===")
+        print(response.text)
+        print("================================\n")
+
+        details = {
+            "disease_en": pest_name,
+            "disease_hi": "अज्ञात रोग",
+            "explanation_en": "",
+            "explanation_hi": "",
+            "precautions_en": "",
+            "precautions_hi": "",
+            "pesticide_en": "",
+            "pesticide_hi": ""
+        }
+
+        lines = response.text.split("\n")
+        current_key = None
+
+        for line in lines:
+            line = line.strip()
+            if not line:
+                continue
+
+            if line.lower().startswith("disease in english:"):
+                details["disease_en"] = line.split(":", 1)[1].strip()
+            elif line.lower().startswith("disease in hindi:"):
+                details["disease_hi"] = line.split(":", 1)[1].strip()
+            elif line.lower().startswith("explanation in english:"):
+                details["explanation_en"] = line.split(":", 1)[1].strip()
+                current_key = "explanation_en"
+            elif line.lower().startswith("explanation in hindi:"):
+                details["explanation_hi"] = line.split(":", 1)[1].strip()
+                current_key = "explanation_hi"
+            elif line.lower().startswith("precautions in english:"):
+                details["precautions_en"] = line.split(":", 1)[1].strip()
+                current_key = "precautions_en"
+            elif line.lower().startswith("precautions in hindi:"):
+                details["precautions_hi"] = line.split(":", 1)[1].strip()
+                current_key = "precautions_hi"
+            elif line.lower().startswith("suggested pesticides in english:"):
+                details["pesticide_en"] = line.split(":", 1)[1].strip()
+                current_key = "pesticide_en"
+            elif line.lower().startswith("suggested pesticides in hindi:"):
+                details["pesticide_hi"] = line.split(":", 1)[1].strip()
+                current_key = "pesticide_hi"
+            elif current_key:
+                # Append additional lines to the last detected category
+                details[current_key] += " " + line.strip()
+
+        return details
+
+    except Exception as e:
+        print("Error generating content from Gemini AI:", e)
+        return {
+            "disease_en": pest_name,
+            "disease_hi": "अनुमानित रोग",
+            "explanation_en": "No explanation available.",
+            "explanation_hi": "इस समय कोई विवरण उपलब्ध नहीं।",
+            "precautions_en": "No precautions available.",
+            "precautions_hi": "इस समय कोई सावधानियाँ उपलब्ध नहीं हैं।",
+            "pesticide_en": "No suggested pesticides available.",
+            "pesticide_hi": "कोई सुझावित कीटनाशक उपलब्ध नहीं।"
+        }
+
+# Function to generate PDF
+def pesticide_generate_pdf(image_path, details, pdf_filename):
+    pdf_path = os.path.join(app.config["UPLOAD_FOLDER"], pdf_filename)
+    c = canvas.Canvas(pdf_path, pagesize=letter)
+    c.drawString(100, 750, f"Disease: {details['disease_en']} ({details['disease_hi']})")
+    c.save()
+    return pdf_path
+
+@app.route("/pesticide_output", methods=["GET", "POST"])
+def pesticide_output():
+    if request.method == "POST":
+        if "image" not in request.files:
+            return render_template("index.html", error="No file uploaded")
+
+        file = request.files["image"]
+        if file.filename == "":
+            return render_template("index.html", error="No file selected")
+
+        filepath = os.path.join(app.config["UPLOAD_FOLDER"], file.filename)
+        file.save(filepath)
+
+        predicted_pest = pesticide_predict_image_class(filepath)
+        details = pesticide_get_precautions(predicted_pest)
+        pdf_filename = f"{predicted_pest}_report.pdf"
+        pdf_path = pesticide_generate_pdf(filepath, details, pdf_filename)
+
+        return render_template("pesticide_output.html", image=filepath, **details, pdf_path=pdf_filename)
+    return render_template("pesticide.html")
 
 if __name__ == '__main__':
     app.run(debug=True)

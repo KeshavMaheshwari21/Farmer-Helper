@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant Disease Classifier</title>
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='styles1.css') }}"> -->
+    <link rel="stylesheet" href="static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<style>
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Centered Container */
+.container {
+    width: 90%;
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Hero Image */
+.hero-image img {
+    width: 100%;
+    max-width: 600px;
+    border-radius: 10px;
+    transition: transform 0.5s ease, box-shadow 0.5s ease;
+  }
+
+  .hero-image img:hover {
+    transform: rotate(5deg) scale(1.1);
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+  }
+
+/* Image Container */
+.image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+/* Upload Box Styling */
+.upload-box {
+    width: 100%;
+    max-width: 180px;
+    height: 180px;
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+    text-align: center;
+    transition: border-color 0.3s ease, transform 0.3s ease;
+    margin: 20px auto;
+    will-change: transform; /* Prevents flickering */
+}
+
+.upload-box:hover {
+    border-color: #555;
+    transform: scale(1.05);
+}
+
+
+/* Hidden File Input */
+.upload-box input {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Image Preview */
+.upload-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+    border-radius: 10px;
+}
+
+/* Form Styling */
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+/* File Input Styling */
+input[type="file"] {
+    margin-top: 10px;
+    font-size: 1rem;
+}
+
+/* Classify Button */
+.classify-btn {
+    width: 50%;
+    max-width: 200px;
+    padding: 0.75rem;
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+    border: none;
+    border-radius: 0.5rem;
+    background-color: #28a745; /* Green color */
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    margin-top: 15px;
+}
+
+/* Button Hover Effect */
+.classify-btn:hover {
+    background-color: #1e7e34;
+    transform: scale(1.05);
+}
+
+/* Result Section */
+.result {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 1rem;
+}
+
+/* Additional Information Sections */
+.disease-info,
+.explanation,
+.precautions {
+    margin-top: 15px;
+    padding: 15px;
+    border-radius: 5px;
+    text-align: justify;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+        padding: 15px;
+    }
+
+    .upload-box {
+        width: 140px;
+        height: 140px;
+        font-size: 12px;
+    }
+
+    .classify-btn {
+        width: 60%;
+        font-size: 0.9rem;
+        padding: 0.65rem;
+    }
+
+    .hero-image img {
+        max-width: 90%;
+    }
+
+    .result {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .classify-btn {
+        width: 80%;
+    }
+
+    .upload-box {
+        width: 120px;
+        height: 120px;
+    }
+
+    .result {
+        font-size: 0.85rem;
+    }
+}
+
+
+</style>
+
+<body class="light">
+    <nav>
+        <div class="logo">KrishiGuide</div>
+        <div class="nav-links">
+            <a href="#home" class="active" data-en="Home" data-hi="होम">Home</a>
+            <a href="#features" data-en="Features" data-hi="सुविधाएं">Features</a>
+            <a href="#about" data-en="About" data-hi="हमारे बारे में">About</a>
+            <a href="#contact" data-en="Contact" data-hi="संपर्क करें">Contact</a>
+            <button id="langToggle">EN</button>
+            <button id="themeToggle"><i class="fas fa-moon"></i></button>
+            <button class="get-started"  data-hi="शुरू करें" data-en="Get Started" onclick="window.location.href='/';">Get Started</button>
+          </div>
+    </nav>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="hero-content">
+              <span class="tag">AI-Powered Farming</span>
+              <h1 class="title" data-hi="कीट पहचान और कीटनाशक सुझाव" data-en="Pest Detection & Pesticide Suggestion">
+                Pest Detection & Pesticide Suggestion
+            </h1>
+            <p class="subtitle"
+               data-en="Detect harmful pests early and receive AI-powered pesticide recommendations to protect your crops and maximize yield."
+               data-hi="हानिकारक कीटों का शीघ्र पता लगाएं और अपनी फसलों की रक्षा करने और उपज बढ़ाने के लिए AI-संचालित कीटनाशक सुझाव प्राप्त करें।">
+                Detect harmful pests early and receive AI-powered pesticide recommendations to protect your crops and maximize yield.
+            </p>
+            
+            </div>
+            <div class="hero-image">
+              <img
+                src="static/images/pesticide.jpeg"
+                alt="Farmer using technology">
+            </div>
+          </section>
+
+        <section id="home" class="hero" style="margin-top: -100px;">
+            <div class="container">
+                <form action="/pesticide_output" method="POST" enctype="multipart/form-data">
+                    <label class="upload-box">
+                        <span id="upload-text" data-en="Upload Image" data-hi="तस्विर अपलोड करें">Upload Image</span>
+                        <img id="image-preview" alt="Preview">
+                        <input type="file" name="image" accept="image/*" required onchange="previewImage(event)">
+                    </label>
+                    <button type="submit" class="classify-btn" style="color: #fff;" data-en="Classify" data-hi="वर्गीकृत करें
+                    ">Classify</button>
+                </form>
+            </div>
+        </section>
+
+ 
+
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>KrishiGuide</h3>
+                <p data-en="Smart farming solutions powered by AI" data-hi="AI द्वारा संचालित स्मार्ट कृषि समाधान">Smart
+                    farming
+                    solutions powered by AI</p>
+            </div>
+            <div class="footer-section">
+                <h3 data-hi="
+                  त्वरित सम्पक" data-en="Quick Links">Quick Links</h3>
+                  <a href="{{ url_for('index') }}" data-en="Home" data-hi="होम">Home</a>
+                  <a href="#features" data-en="Features" data-hi="सुविधाएं">Features</a>
+                  <a href="#about" data-en="About" data-hi="हमारे बारे में">About</a>
+                  <a href="#contact" data-en="Contact" data-hi="संपर्क करें">Contact</a>
+                  <a href="/developers" data-en="Developers" data-hi="डेवलपर्स">Developers</a>
+              </div>
+              <div class="footer-section">
+                <h3 data-en="Features" data-hi="सुविधाएं">Features</h3>
+                <a href="/crop_recommendation" data-en="Crop Suggestion" data-hi="फसल सुझाव
+                ">Crop Suggestion</a>
+                <a href="/crop_price_predict" data-en="Price Prediction" data-hi="मूल्य भविष्यवाणी
+                ">Price Prediction</a>
+                <a href="/plant_disease" data-en="Disease Detection" data-hi="रोग का पता लगाना
+                ">Disease Detection</a>
+                <a href="/weather_forecast" data-en="Weather Forecast" data-hi="मौसम पूर्वानुमान
+                ">Weather Forecast</a>
+              </div>
+            <div class="footer-section">
+                <h3 data-en="Contact" data-hi="संपर्क करें">Contact</h3>
+                <p>info@krishiguide.com</p>
+                <p>+91 98765 43210</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p data-en="&copy; 2025 KrishiGuide. All rights reserved." data-hi="&copy; 
+        2025 कृषिगाइड। सभी अधिकार सुरक्षित।">&copy; 2025 KrishiGuide. All rights reserved.</p>
+        </div>
+    </footer>
+
+
+    <script src="static/script.js"></script>
+
+    <script>
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById("image-preview").src = e.target.result;
+                    document.getElementById("image-preview").style.display = "block";
+                    document.getElementById("upload-text").style.display = "none";
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
+</body>
+
+</html>
