@@ -675,7 +675,7 @@ def pesticide_suggestion_output():
 
         pesticides_name = get_pesticides(pest_name)
         print(pesticides_name)
-        return jsonify({'Pesticides': f"{pest_name}: {pesticides_name}"})
+        return jsonify({'Pesticides': f"{pesticides_name}"})
     
     except Exception as e:
         return jsonify({'error': str(e)}), 500

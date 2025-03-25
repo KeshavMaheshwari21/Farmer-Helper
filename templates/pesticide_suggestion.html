@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Commodity Price Prediction</title>
+    <title>Pesticide Suggestion</title>
     <link rel="stylesheet" href="static/style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -137,11 +137,14 @@
                     </select>
 
 
-                    <button type="submit">Submit</button>
+                    <button type="submit" data-en="Submit" data-hi="सबमिट करे">Submit</button>
                 </form>
                 
             </div>
-            <div class="result-container" style="margin-top: 20px;margin-bottom: 20px;">
+            <div id="loader" style="display: none; text-align: center; margin-top: 10px;">
+                <img src="https://i.gifer.com/ZKZg.gif" alt="Loading..." width="50">
+            </div>            
+            <div class="result-container" style="margin-top: 20px;margin-bottom: 20px;text-align: left;">
                 <div id="result"></div>
             </div>
         </div>
@@ -208,24 +211,47 @@
             });
 
             // Handle form submission
-            $("#predictionForm").submit(function (event) {
-                event.preventDefault();
+            $(document).ready(function () {
+    $("#predictionForm").submit(function (event) {
+        event.preventDefault();
 
-                let pestName = $("#pest_name").val();  // Ensure the input field has the correct ID
+        let pestName = $("#pest_name").val(); // Get input value
+        $("#loader").show(); // Show loader animation
+        $("#result").hide(); // Hide previous results
 
-                $.ajax({
-                    url: "/pesticide_suggestion_output",
-                    type: "POST",
-                    contentType: "application/json",  // Send JSON data
-                    data: JSON.stringify({ "pest_name": pestName }), // Correct key matching Flask
-                    success: function (response) {
-                        $("#result").text(response.Pesticides).fadeIn();  // Fix response key
-                    },
-                    error: function (xhr, status, error) {
-                        $("#result").text("Error: " + xhr.responseJSON.error).fadeIn();  // Show error messages
+        $.ajax({
+            url: "/pesticide_suggestion_output",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({ "pest_name": pestName }),
+            success: function (response) {
+                setTimeout(function () {
+                    $("#loader").hide(); // Hide loader after 2s
+
+                    // Add header
+                    let resultText = `<strong>🛡️ Suggested Pesticides for ${pestName}</strong><br><br>`;
+
+                    // Ensure pesticides are properly formatted as a list
+                    if (response.Pesticides) {
+                        let pesticidesArray = response.Pesticides.split(", "); // Split by comma
+                        pesticidesArray.forEach(function (pesticide) {
+                            resultText += `🔹 ${pesticide}<br>`; // Add bullets and new lines
+                        });
+                    } else {
+                        resultText += "No pesticides found.";
                     }
-                });
-            });
+
+                    $("#result").html(resultText).fadeIn(); // Update and show results
+                }, 2000); // 2s delay
+            },
+            error: function (xhr, status, error) {
+                $("#loader").hide(); // Hide loader on error
+                $("#result").html("❌ Error: " + xhr.responseJSON.error).fadeIn();
+            }
+        });
+    });
+});
+
 
         });
     </script>

@@ -1,0 +1,11 @@
+State,District,Market,Commodity,Variety,Grade,Arrival_Date,Min_Price,Max_Price,Modal_Price,Commodity_Code
+Maharashtra,Raigad,Panvel,Coriander(Leaves),Other,FAQ,10/11/2006,300,400,350,43
+Maharashtra,Raigad,Panvel,Coriander(Leaves),Other,FAQ,11/11/2006,400,500,450,43
+Maharashtra,Raigad,Panvel,Coriander(Leaves),Other,FAQ,04/12/2006,200,300,250,43
+Maharashtra,Raigad,Panvel,Coriander(Leaves),Other,FAQ,06/12/2006,200,300,250,43
+Maharashtra,Satara,Karad,Coriander(Leaves),Other,FAQ,03/09/2006,200,550,400,43
+Maharashtra,Satara,Karad,Coriander(Leaves),Other,FAQ,01/11/2006,250,300,250,43
+Maharashtra,Satara,Karad,Coriander(Leaves),Other,FAQ,29/11/2006,50,125,100,43
+Maharashtra,Satara,Patan,Coriander(Leaves),Other,FAQ,04/08/2006,250,300,275,43
+Maharashtra,Satara,Patan,Coriander(Leaves),Other,FAQ,30/08/2006,250,350,300,43
+Maharashtra,Satara,Patan,Coriander(Leaves),Other,FAQ,11/09/2006,300,450,375,43
