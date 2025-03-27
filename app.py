@@ -15,6 +15,8 @@ from flask import send_file
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 import time
+import xgboost as xgb
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
@@ -679,6 +681,120 @@ def pesticide_suggestion_output():
     
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+# List of available states
+states = ['Maharashtra', 'Meghalaya', 'Delhi', 'Odisha', 'Punjab',
+          'Rajasthan', 'Tamil Nadu', 'Telangana', 'Uttar Pradesh',
+          'West Bengal', 'Karnataka', 'Kerala', 'Madhya Pradesh', 'Gujarat',
+          'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar',
+          'Chattisgarh', 'Jharkhand', 'Haryana', 'Chandigarh',
+          'Himachal Pradesh', 'Jammu and Kashmir', 'Goa', 'Uttrakhand',
+          'Tripura', 'Manipur']
+
+# Function to load dataset based on state
+def load_state_data(state):
+    state_filename = f"price forecast data/{state}.csv"
+    
+    if not os.path.exists(state_filename):
+        return None
+    
+    df = pd.read_csv(state_filename)
+    df['Arrival_Date'] = pd.to_datetime(df['Arrival_Date'], format="%d/%m/%Y")
+    return df
+
+@app.route("/")
+def home():
+    return render_template("index.html", states=states)
+
+@app.route("/get_filters_price_forecast", methods=["POST"])
+def get_filters_price_forecst():
+    data = request.json
+    state = data.get("State")
+
+    # Load data for the selected state
+    df = load_state_data(state)
+    if df is None:
+        return jsonify({"error": f"No data found for {state}"}), 400
+
+    # Get unique filter values
+    unique_values = {
+        "District": sorted(df["District"].unique()),
+        "Market": sorted(df["Market"].unique()),
+        "Commodity": sorted(df["Commodity"].unique()),
+        "Variety": sorted(df["Variety"].unique()),
+        "Grade": sorted(df["Grade"].unique())
+    }
+    
+    return jsonify(unique_values)
+
+
+
+@app.route("/get_predictions_price_forecast", methods=["POST"])
+def get_predictions_price_forecast():
+    data = request.json
+    state = data.get("State")
+    district = data.get("District")
+    market = data.get("Market")
+    commodity = data.get("Commodity")
+    variety = data.get("Variety")
+    grade = data.get("Grade")
+    num_days = int(data.get("NumDays", 30))
+
+    print(state)
+
+    # Load data for the selected state
+    df = load_state_data(state)
+    if df is None:
+        return jsonify({"error": f"No data found for {state}"}), 400
+
+    # Filter dataset
+    df_filtered = df[
+        (df["District"] == district) &
+        (df["Market"] == market) &
+        (df["Commodity"] == commodity) &
+        (df["Variety"] == variety) &
+        (df["Grade"] == grade)
+    ]
+
+    if df_filtered.empty:
+        return jsonify({"error": "No data found for selected parameters"}), 400
+
+    # Aggregate data by date and compute the mean price
+    df_filtered = df_filtered.groupby("Arrival_Date")["Modal_Price"].mean().reset_index()
+
+    # Feature Engineering
+    df_filtered["day"] = df_filtered["Arrival_Date"].dt.day
+    df_filtered["month"] = df_filtered["Arrival_Date"].dt.month
+    df_filtered["year"] = df_filtered["Arrival_Date"].dt.year
+    df_filtered["day_of_week"] = df_filtered["Arrival_Date"].dt.dayofweek
+
+    # Prepare training data
+    X = df_filtered[["day", "month", "year", "day_of_week"]]
+    y = df_filtered["Modal_Price"]
+
+    # Train XGBoost model
+    model = xgb.XGBRegressor(objective="reg:squarederror", n_estimators=100, learning_rate=0.1)
+    model.fit(X, y)
+
+    # Predict next 60 days
+    last_date = df_filtered["Arrival_Date"].max()
+    future_dates = [last_date + timedelta(days=i) for i in range(1, num_days+1)]  # 60 days ahead
+
+    future_df = pd.DataFrame({
+        "day": [date.day for date in future_dates],
+        "month": [date.month for date in future_dates],
+        "year": [date.year for date in future_dates],
+        "day_of_week": [date.weekday() for date in future_dates],
+    })
+
+    future_predictions = model.predict(future_df)
+
+    # Convert to JSON format
+    actual_data = df_filtered[["Arrival_Date", "Modal_Price"]].rename(columns={"Arrival_Date": "ds", "Modal_Price": "y"}).to_dict(orient="records")
+    predicted_data = [{"ds": future_dates[i], "yhat": float(future_predictions[i])} for i in range(len(future_dates))]
+
+    return jsonify({"actual": actual_data, "predicted": predicted_data})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
