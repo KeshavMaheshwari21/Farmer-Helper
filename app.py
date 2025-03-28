@@ -81,7 +81,7 @@ price_encoder = load_encoder()
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', states=states)
 
 @app.route('/crop_price_predict')
 def crop_price_predict():
@@ -683,10 +683,10 @@ def pesticide_suggestion_output():
         return jsonify({'error': str(e)}), 500
     
 # List of available states
-states = ['Maharashtra', 'Meghalaya', 'Delhi', 'Odisha', 'Punjab',
+states = ['Maharashtra', 'Meghalaya', 'Delhi', 'NCT of Delhi', 'Odisha', 'Punjab',
           'Rajasthan', 'Tamil Nadu', 'Telangana', 'Uttar Pradesh',
           'West Bengal', 'Karnataka', 'Kerala', 'Madhya Pradesh', 'Gujarat',
-          'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar',
+          'Andhra Pradesh', 'Andaman and Nicobar', 'Assam', 'Bihar',
           'Chattisgarh', 'Jharkhand', 'Haryana', 'Chandigarh',
           'Himachal Pradesh', 'Jammu and Kashmir', 'Goa', 'Uttrakhand',
           'Tripura', 'Manipur']
@@ -701,10 +701,6 @@ def load_state_data(state):
     df = pd.read_csv(state_filename)
     df['Arrival_Date'] = pd.to_datetime(df['Arrival_Date'], format="%d/%m/%Y")
     return df
-
-@app.route("/")
-def home():
-    return render_template("index.html", states=states)
 
 @app.route("/get_filters_price_forecast", methods=["POST"])
 def get_filters_price_forecst():

@@ -7,14 +7,16 @@
   <title>KrishiGuide - Smart Farming Solutions</title>
   <link rel="stylesheet" href="static/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <style>
-.feature-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 columns */
-  gap: 2rem;
-  padding: 2rem 0;
-}
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    /* 3 columns */
+    gap: 2rem;
+    padding: 2rem 0;
+  }
 
   .feature-card {
     text-align: center;
@@ -435,6 +437,96 @@
     /* Adds spacing between buttons */
   }
 </style>
+<style>
+  #price {
+    background-color: var(--secondary-bg);
+    padding: 4rem 5%;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    margin: 2rem auto;
+  }
+
+  .price-content {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .price-content h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--text-color);
+    margin-bottom: 1.5rem;
+  }
+
+  #filterForm {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+  }
+
+  #filterForm label {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-color);
+  }
+
+  #filterForm select,
+  #filterForm input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-size: 1rem;
+  }
+
+  #predictButton {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 1rem;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    grid-column: span 2;
+  }
+
+  #predictButton:hover {
+    background-color: var(--primary-dark);
+  }
+
+  .price-canvas {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2rem;
+    padding: 2rem;
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+  }
+</style>
+<style>
+  .price-canvas {
+    display: none;
+    /* Initially hidden */
+  }
+
+  .loader {
+    display: none;
+    /* Hide loader initially */
+    font-size: 18px;
+    text-align: center;
+    font-weight: bold;
+    padding: 10px;
+  }
+</style>
 
 <body class="light">
   <nav>
@@ -532,10 +624,10 @@
             <h3 data-en="Pest Detection" data-hi="कीट पहचान">
               Pest Detection
             </h3>
-            <p data-en="Identify pests affecting your crops with AI-powered detection." 
-               data-hi="एआई-संचालित पहचान के साथ अपने फसलों को प्रभावित करने वाले कीटों की पहचान करें।">
+            <p data-en="Identify pests affecting your crops with AI-powered detection."
+              data-hi="एआई-संचालित पहचान के साथ अपने फसलों को प्रभावित करने वाले कीटों की पहचान करें।">
               Identify pests affecting your crops with AI-powered detection.
-            </p>          
+            </p>
           </a>
         </div>
         <div class="feature-card">
@@ -544,12 +636,75 @@
             <h3 data-en="Pesticide Suggestion" data-hi="कीटनाशक सुझाव">
               Pesticide Suggestion
             </h3>
-            <p data-en="Get recommended pesticides for effective control of pests affecting your crops." 
-               data-hi="अपने फसलों को प्रभावित करने वाले कीटों के प्रभावी नियंत्रण के लिए अनुशंसित कीटनाशक प्राप्त करें।">
+            <p data-en="Get recommended pesticides for effective control of pests affecting your crops."
+              data-hi="अपने फसलों को प्रभावित करने वाले कीटों के प्रभावी नियंत्रण के लिए अनुशंसित कीटनाशक प्राप्त करें।">
               Get recommended pesticides for effective control of pests affecting your crops.
-            </p>          
+            </p>
           </a>
-        </div>        
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <section id="price" class="pirce">
+      <h2 class="section-title" data-en="Smart Crop Price Forecasting with AI"
+        data-hi="एआई के साथ स्मार्ट फसल मूल्य पूर्वानुमान">
+        Smart Crop Price Forecasting with AI
+      </h2>
+      <p class="section-subtitle"
+        data-en="Stay ahead with AI-driven price predictions, helping you sell at the right time for maximum profits"
+        data-hi="एआई-संचालित मूल्य पूर्वानुमान के साथ आगे बढ़ें, जो आपको सही समय पर अधिकतम लाभ के लिए बिक्री करने में मदद करता है">
+        Stay ahead with AI-driven price predictions, helping you sell at the right time for maximum profits
+      </p>
+      <div class="price-content">
+        <h2 data-en="Select Filters to Customize Predictions" data-hi="पूर्वानुमानों को अनुकूलित करने के लिए फ़िल्टर चुनें" style="font-size: 1.5rem;">Select Filters to Customize Predictions</h2>
+        <form id="filterForm">
+          <label for="state" style="margin-top: 15px;" data-hi="राज्य :" data-en="State :">State:</label>
+          <select id="state" name="State" required>
+            <option value="" data-en="Select State" data-hi="राज्य चुनें">Select State</option>
+            {% for state in states %}
+            <option value="{{ state }}">{{ state }}</option>
+            {% endfor %}
+          </select>
+
+          <label for="district" style="margin-top: 15px;" data-en="District:" data-hi="ज़िला:">District:</label>
+          <select id="district" name="District" required>
+            <option value="" data-en="Select District" data-hi="ज़िला चुनें">Select District</option>
+          </select>
+
+          <label for="market" style="margin-top: 15px;" data-en="Market:" data-hi="बाज़ार:">Market:</label>
+          <select id="market" name="Market" required>
+            <option value="" data-en="Select Market" data-hi="बाज़ार चुनें">Select Market</option>
+          </select>
+
+          <label for="commodity" style="margin-top: 15px;" data-en="Commodity:" data-hi="
+          माल:">Commodity:</label>
+          <select id="commodity" name="Commodity" required>
+            <option value="" data-en="Select Commodity" data-hi="माल चुनें">Select Commodity</option>
+          </select>
+
+          <label for="variety" style="margin-top: 15px;" data-en="Variety:" data-hi="विविधता:">Variety:</label>
+          <select id="variety" name="Variety" required>
+            <option value="" data-en="Select Variety" data-hi="विविधता चुनें">Select Variety</option>
+          </select>
+
+          <label for="grade" style="margin-top: 15px;" data-en="Grade:" data-hi="श्रेणी:">Grade:</label>
+          <select id="grade" name="Grade" required>
+            <option value="" data-en="Select Grade" data-hi="श्रेणी चुनें">Select Grade</option>
+          </select>
+
+          <label for="num_days" style="margin-top: 15px;" data-en="Number of Days (Max 120):" data-hi="दिनों की संख्या (अधिकतम 120):">Number of Days (Max 120):</label>
+          <input type="number" id="num_days" name="NumDays" min="1" max="120" value="30" required>
+
+          <button type="button" id="predictButton" data-en="Generate Graph" data-hi="ग्राफ़ उत्पन्न करें">Generate Graph</button>
+        </form>
+      </div>
+      <div class="loader" id="loader" data-en="Loading Graph... ⏳" data-hi="ग्राफ़ लोड हो रहा है... ⏳">Loading Graph...
+        ⏳</div>
+
+      <div class="price-canvas" id="chartContainer">
+        <canvas id="predictionChart" style="width: 900px;height: 500px;"></canvas>
+      </div>
       </div>
       </div>
     </section>
@@ -699,7 +854,165 @@
 
   <!-- Blurred Background -->
 
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const ctx = document.getElementById("predictionChart").getContext("2d");
+      let chart = null;
 
+      // Fetch available states when page loads
+      fetch("/get_states_price_forecast")
+        .then(response => response.json())
+        .then(data => {
+          let stateSelect = document.getElementById("state");
+          data.states.forEach(state => {
+            let option = document.createElement("option");
+            option.value = state;
+            option.textContent = state;
+            stateSelect.appendChild(option);
+          });
+        })
+        .catch(error => console.error("Error fetching states:", error));
+
+      // Fetch dependent dropdowns when state changes
+      document.getElementById("state").addEventListener("change", function () {
+        let state = this.value;
+        if (!state) return;
+
+        fetch("/get_filters_price_forecast", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ State: state })
+        })
+          .then(response => response.json())
+          .then(data => {
+            ["district", "market", "commodity", "variety", "grade"].forEach(field => {
+              let select = document.getElementById(field);
+              select.innerHTML = `<option value="">Select ${field.charAt(0).toUpperCase() + field.slice(1)}</option>`;
+              data[field.charAt(0).toUpperCase() + field.slice(1)].forEach(value => {
+                let option = document.createElement("option");
+                option.value = value;
+                option.textContent = value;
+                select.appendChild(option);
+              });
+            });
+          })
+          .catch(error => console.error("Error fetching filters:", error));
+      });
+
+      // Generate Graph when button is clicked
+      document.getElementById("predictButton").addEventListener("click", function () {
+        const state = document.getElementById("state").value;
+        const district = document.getElementById("district").value;
+        const market = document.getElementById("market").value;
+        const commodity = document.getElementById("commodity").value;
+        const variety = document.getElementById("variety").value;
+        const grade = document.getElementById("grade").value;
+        const numDays = document.getElementById("num_days").value;
+
+        if (!district || !market || !commodity || !variety || !grade || !numDays) {
+          alert("Please fill all the fields before generating the graph.");
+          return;
+        }
+
+        let loader = document.getElementById("loader");
+        let chartContainer = document.getElementById("chartContainer");
+
+        // Show loader and hide chart
+        loader.style.display = "block";
+        chartContainer.style.display = "none";
+
+        fetch("/get_predictions_price_forecast", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            State: state,
+            District: district,
+            Market: market,
+            Commodity: commodity,
+            Variety: variety,
+            Grade: grade,
+            NumDays: parseInt(numDays)
+          })
+        })
+          .then(response => response.json())
+          .then(data => {
+            if (data.error) {
+              alert(data.error);
+              loader.style.display = "none";
+              return;
+            }
+
+            const actual = data.actual || [];
+            const predicted = data.predicted || [];
+
+            if (!actual.length || !predicted.length) {
+              alert("No data available to display the chart.");
+              loader.style.display = "none";
+              return;
+            }
+
+            function formatDate(dateString) {
+              const date = new Date(dateString);
+              return date.toLocaleDateString("en-GB", { weekday: "short", day: "2-digit", month: "short", year: "numeric" }).replace(/,/g, "");
+            }
+
+            const actualDates = actual.map(entry => formatDate(entry.ds));
+            const actualPrices = actual.map(entry => entry.y);
+            const predictedDates = predicted.map(entry => formatDate(entry.ds));
+            const predictedPrices = predicted.map(entry => entry.yhat);
+
+            if (chart) chart.destroy();
+
+            setTimeout(() => {
+              loader.style.display = "none";
+              chartContainer.style.display = "block";
+
+              chart = new Chart(ctx, {
+                type: "line",
+                data: {
+                  labels: [...actualDates, ...predictedDates],
+                  datasets: [
+                    {
+                      label: "Actual Price",
+                      data: actualPrices,
+                      borderColor: "#28a745",
+                      backgroundColor: "rgba(40, 167, 69, 0.2)",
+                      fill: true,
+                      tension: 0.4,
+                      pointRadius: 3,
+                      borderWidth: 2
+                    },
+                    {
+                      label: "Predicted Price",
+                      data: [...Array(actualPrices.length).fill(null), ...predictedPrices],
+                      borderColor: "#ffc107",
+                      backgroundColor: "rgba(255, 193, 7, 0.2)",
+                      fill: true,
+                      tension: 0.4,
+                      borderDash: [5, 5],
+                      pointRadius: 3,
+                      borderWidth: 2
+                    }
+                  ]
+                },
+                options: {
+                  maintainAspectRatio: false, // Allow resizing
+                  responsive: true, // Fix to specified width and height
+                  scales: {
+                    x: { title: { display: true, text: "Date" } },
+                    y: { title: { display: true, text: "Price (₹)" } }
+                  }
+                }
+              });
+            }, 2000);
+          })
+          .catch(error => {
+            console.error("Error fetching predictions:", error);
+            loader.style.display = "none";
+          });
+      });
+    });
+  </script>
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
