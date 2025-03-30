@@ -359,27 +359,63 @@
     outline: none;
   }
 
-  /* Maximized Chatbot */
-  .chatbot.maximized .chatbot-container {
+  /* Maximized Chatbot with Animation */
+.chatbot.maximized .chatbot-container {
     width: 90%;
     height: 85%;
     max-width: 1000px;
     max-height: 900px;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) scale(0.8);
     position: fixed;
     z-index: 1002;
     display: flex;
     flex-direction: column;
-  }
+    opacity: 0;
+    animation: fadeInScaleUp 0.5s ease-out forwards;
+}
 
-  /* Input Remains at Bottom in Maximized View */
-  .chatbot.maximized .chatbot-input {
+/* Input Remains at Bottom with Slide-in Effect */
+.chatbot.maximized .chatbot-input {
     position: relative;
     bottom: 0;
     width: 100%;
-  }
+    transform: translateY(50px);
+    opacity: 0;
+    animation: slideUp 0.5s ease-out 0.2s forwards;
+}
+
+/* Glow effect on hover */
+.chatbot.maximized .chatbot-container:hover {
+    box-shadow: 0px 0px 20px rgb(76, 175, 80);
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+/* Keyframes for Fade-in & Scale-up */
+@keyframes fadeInScaleUp {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+/* Keyframes for Input Slide-up Effect */
+@keyframes slideUp {
+    0% {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
 
   /* Blurred Background */
   .blur-bg {
