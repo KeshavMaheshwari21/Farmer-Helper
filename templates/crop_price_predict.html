@@ -9,81 +9,129 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
-    .form-section {
-      max-width: 500px;
-      margin: auto;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    }
+    .container {
+    margin-top: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
-    .form-section h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
+.form-section {
+    background-color: var(--secondary-bg);
+    padding: 3rem 4%;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    width: 100%;
+    max-width: 750px; /* Slightly wider */
+    text-align: center;
+}
 
-    form {
-      display: flex;
-      flex-direction: column;
-    }
+.form-section h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--text-color);
+    margin-bottom: 1.5rem;
+}
 
-    label {
-      margin-top: 10px;
-      font-weight: bold;
-    }
+#predictionForm {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); /* Wider fields */
+    gap: 1rem; /* Reduced gap */
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+}
 
-    select {
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 14px;
-    }
+#predictionForm label {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-color);
+    text-align: left;
+    margin-bottom: 0.3rem; /* Reduced spacing */
+    display: block; /* Ensures it stays above */
+}
 
-    /* Centered and larger result */
-    .result-container {
-      text-align: center;
-      margin-top: 20px;
-    }
+#predictionForm select {
+    width: 130%;
+    padding: 1rem; /* Increased padding */
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-size: 1rem;
+    cursor: pointer;
+}
 
-    #result {
-      display: none;
-      font-size: 24px;
-      font-weight: bold;
-      color: #d35400;
-      background: #fef5e7;
-      padding: 10px;
-      border-radius: 8px;
-      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-      width: fit-content;
-      margin: auto;
-    }
+/* Disabled dropdowns */
+#predictionForm select:disabled {
+    background-color: rgba(0, 0, 0, 0.05);
+    cursor: not-allowed;
+}
 
-    .form-section button[type="submit"] {
-      margin-top: 20px;
-      padding: 10px;
-      background: #28a745;
-      color: white;
-      font-size: 16px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
+/* Submit button */
+#predictionForm button {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 1rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    grid-column: span 2;
+}
 
-    .form-section button[type="submit"]:hover {
-      background: #218838;
-    }
+#predictionForm button:hover {
+    background-color: var(--primary-dark);
+}
 
-    .hero-image img {
-      width: 100%;
-      max-width: 600px;
-      border-radius: 10px;
-      transition: transform 0.5s ease, box-shadow 0.5s ease;
-    }
+/* Result container */
+.result-container {
+    margin-top: 1.5rem;
+    text-align: center;
+}
 
-    .hero-image img:hover {
-      transform: rotate(5deg) scale(1.1);
-      box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
-    }
+#result {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: var(--text-color);
+    padding: 1rem;
+    border-radius: 10px;
+}
+
+  </style>
+  <style>
+    /* Loader Styles */
+.loader {
+    display: none; /* Initially hidden */
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(0, 0, 0, 0.2);
+    border-top: 4px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 20px auto; /* Centers loader */
+}
+
+/* Loader Animation */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.hero-image img {
+    width: 100%;
+    max-width: 600px;
+    border-radius: 10px;
+    transition: transform 0.5s ease, box-shadow 0.5s ease;
+  }
+
+  .hero-image img:hover {
+    transform: rotate(5deg) scale(1.1);
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+  }
   </style>
 </head>
 
@@ -126,43 +174,44 @@
         <h2 data-en="Get Price Prediction" data-hi="मूल्य भविष्यवाणी प्राप्त करें">Get Price
           Prediction</h2>
         <form id="predictionForm">
-          <label data-en="Select State:" data-hi="राज्य चुनें:">Select State:</label>
-          <select id="state" name="state">
-            <option value="">-- Select State --</option>
+          <label data-en="State:" data-hi="राज्य चुनें:" style="margin-top: 15px;margin-left: 50px;">Select State:</label>
+          <select id="state" name="state" style="margin-left: -120px;">
+            <option value="" data-en="-- Select State --" data-hi="-- राज्य चुनें --">-- Select State --</option>
             {% for state in states %}
             <option value="{{ state }}">{{ state }}</option>
             {% endfor %}
           </select>
 
-          <label data-en="Select District:" data-hi="जिला चुनें:">Select District:</label>
-          <select id="district" name="district" disabled>
-            <option value="">-- Select District --</option>
+          <label data-en="District:" data-hi="जिला चुनें:" style="margin-top: 15px;margin-left: 50px;">Select District:</label>
+          <select id="district" name="district" disabled style="margin-left: -120px;">
+            <option value="" data-hi="-- जिला चुनें --" data-en="-- Select District --">-- Select District --</option>
           </select>
 
-          <label data-en="Select Market:" data-hi="बाजार चुनें:">Select Market:</label>
-          <select id="market" name="market" disabled>
-            <option value="">-- Select Market --</option>
+          <label data-en="Market:" data-hi="बाजार चुनें:" style="margin-top: 15px;margin-left: 50px;">Select Market:</label>
+          <select id="market" name="market" disabled style="margin-left: -120px;">
+            <option value="" data-en="-- Select Market --" data-hi="-- बाज़ार चुनें --">-- Select Market --</option>
           </select>
 
-          <label data-en="Select Commodity:" data-hi="वस्तु चुनें:">Select Commodity:</label>
-          <select id="commodity" name="commodity" disabled>
-            <option value="">-- Select Commodity --</option>
+          <label data-en="Commodity:" data-hi="वस्तु चुनें:" style="margin-top: 15px;margin-left: 50px;">Select Commodity:</label>
+          <select id="commodity" name="commodity" disabled style="margin-left: -120px;">
+            <option value="" data-en="-- Select Commodity --" data-hi="-- वस्तु का चयन करें --">-- Select Commodity --</option>
           </select>
 
-          <label data-en="Select Variety:" data-hi="प्रकार चुनें:">Select Variety:</label>
-          <select id="variety" name="variety" disabled>
-            <option value="">-- Select Variety --</option>
+          <label data-en="Variety:" data-hi="प्रकार चुनें:" style="margin-top: 15px;margin-left: 50px;">Select Variety:</label>
+          <select id="variety" name="variety" disabled style="margin-left: -120px;">
+            <option value="" data-en="-- Select Variety --" data-hi="-- किस्म चुनें --">-- Select Variety --</option>
           </select>
 
-          <label data-en="Select Grade:" data-hi="ग्रेड चुनें:">Select Grade:</label>
-          <select id="grade" name="grade" disabled>
-            <option value="">-- Select Grade --</option>
+          <label data-en="Grade:" data-hi="ग्रेड चुनें:" style="margin-top: 15px;margin-left: 50px;">Select Grade:</label>
+          <select id="grade" name="grade" disabled style="margin-left: -120px;">
+            <option value="" data-en="-- Select Grade --" data-hi="-- ग्रेड चुनें --">-- Select Grade --</option>
           </select>
 
-          <button type="submit">Submit</button>
+          <button type="submit" data-hi="प्राप्त करें" data-en="Submit">Submit</button>
         </form>
-        <div class="result-container">
-          <div id="result"></div>
+        <div class="result-container" style="margin-top: -25px;">
+          <div class="loader" id="loader" style="margin-top: 45px;"></div> <!-- Loader -->
+          <div id="result" style="margin-top: 45px;"></div>
         </div>
       </div>
     </div>
@@ -214,71 +263,97 @@
   </footer>
 
   <script src="static/script.js"></script>
+
   <script>
-    $(document).ready(function () {
-      // Language toggle logic
-      $("#languageToggle").click(function () {
-        var isEnglish = $(this).text() === "EN";
-        $(this).text(isEnglish ? "हिं" : "EN");
+$(document).ready(function () {
+    let isEnglish = true; // Track current language
 
+    // Language toggle logic
+    $("#languageToggle").click(function () {
+        isEnglish = !isEnglish; // Toggle the language
+        $(this).text(isEnglish ? "En" : "हिं");
+
+        // Update all text elements
         $("[data-en]").each(function () {
-          var text = isEnglish ? $(this).attr("data-hi") : $(this).attr("data-en");
-          $(this).text(text);
+            var text = isEnglish ? $(this).attr("data-en") : $(this).attr("data-hi");
+            $(this).text(text);
         });
-      });
 
-      // Fetch data dynamically
-      $("#state").change(function () {
+        // Update dropdown placeholders dynamically based on language
+        updateDropdownPlaceholders();
+    });
+
+    function updateDropdownPlaceholders() {
+        $("#state option:first").text(isEnglish ? "-- Select State --" : "-- राज्य चुनें --");
+        $("#district option:first").text(isEnglish ? "-- Select District --" : "-- जिला चुनें --");
+        $("#market option:first").text(isEnglish ? "-- Select Market --" : "-- बाजार चुनें --");
+        $("#commodity option:first").text(isEnglish ? "-- Select Commodity --" : "-- वस्तु चुनें --");
+        $("#variety option:first").text(isEnglish ? "-- Select Variety --" : "-- किस्म चुनें --");
+        $("#grade option:first").text(isEnglish ? "-- Select Grade --" : "-- ग्रेड चुनें --");
+    }
+
+    // Fetch data dynamically when state is selected
+    $("#state").change(function () {
         var state = $(this).val();
         if (state) {
-          $.ajax({
-            url: "/get_options",
-            type: "POST",
-            contentType: "application/json",
-            data: JSON.stringify({ state: state }),
-            success: function (response) {
-              updateDropdown("#district", response.districts);
-              updateDropdown("#market", response.markets);
-              updateDropdown("#commodity", response.commodities);
-              updateDropdown("#variety", response.varieties);
-              updateDropdown("#grade", response.grades);
-            }
-          });
+            $.ajax({
+                url: "/get_options",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({ state: state }),
+                success: function (response) {
+                    updateDropdown("#district", response.districts, isEnglish ? "-- Select District --" : "-- जिला चुनें --");
+                    updateDropdown("#market", response.markets, isEnglish ? "-- Select Market --" : "-- बाजार चुनें --");
+                    updateDropdown("#commodity", response.commodities, isEnglish ? "-- Select Commodity --" : "-- वस्तु चुनें --");
+                    updateDropdown("#variety", response.varieties, isEnglish ? "-- Select Variety --" : "-- किस्म चुनें --");
+                    updateDropdown("#grade", response.grades, isEnglish ? "-- Select Grade --" : "-- ग्रेड चुनें --");
+                }
+            });
         } else {
-          resetDropdown("#district");
-          resetDropdown("#market");
-          resetDropdown("#commodity");
-          resetDropdown("#variety");
-          resetDropdown("#grade");
+            resetDropdown("#district", isEnglish ? "-- Select District --" : "-- जिला चुनें --");
+            resetDropdown("#market", isEnglish ? "-- Select Market --" : "-- बाजार चुनें --");
+            resetDropdown("#commodity", isEnglish ? "-- Select Commodity --" : "-- वस्तु चुनें --");
+            resetDropdown("#variety", isEnglish ? "-- Select Variety --" : "-- किस्म चुनें --");
+            resetDropdown("#grade", isEnglish ? "-- Select Grade --" : "-- ग्रेड चुनें --");
         }
-      });
+    });
 
-      function updateDropdown(selector, options) {
+    function updateDropdown(selector, options, defaultText) {
         var dropdown = $(selector);
-        dropdown.empty().append('<option value="">-- Select --</option>');
+        dropdown.empty().append('<option value="">' + defaultText + '</option>');
         options.forEach(function (option) {
-          dropdown.append(new Option(option, option));
+            dropdown.append(new Option(option, option));
         });
         dropdown.prop("disabled", false);
-      }
+    }
 
-      function resetDropdown(selector) {
-        $(selector).empty().append('<option value="">-- Select --</option>').prop("disabled", true);
-      }
+    function resetDropdown(selector, defaultText) {
+        $(selector).empty().append('<option value="">' + defaultText + '</option>').prop("disabled", true);
+    }
 
-      // Handle form submission
-      $("#predictionForm").submit(function (event) {
+    // Handle form submission with loader
+    $("#predictionForm").submit(function (event) {
         event.preventDefault();
+
+        // Show loader, hide result
+        $("#loader").show();
+        $("#result").hide();
+
         $.ajax({
-          url: "/predict",
-          type: "POST",
-          data: $(this).serialize(),
-          success: function (response) {
-            $("#result").text(response.predicted_price).fadeIn();
-          }
+            url: "/predict",
+            type: "POST",
+            data: $(this).serialize(),
+            success: function (response) {
+                // Simulate a 2s delay before showing the result
+                setTimeout(function () {
+                    $("#loader").hide();
+                    $("#result").text(response.predicted_price).fadeIn();
+                }, 2000);
+            }
         });
-      });
     });
+});
+
   </script>
 </body>
 

@@ -131,7 +131,7 @@ def predict():
     try:
         new_data_encoded = price_encoder.transform(new_data)
         predicted_price = price_model.predict(new_data_encoded)[0]
-        return jsonify({'predicted_price': f"₹{predicted_price:.2f}"})
+        return jsonify({'predicted_price': f"Price : ₹{predicted_price:.2f}"})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     

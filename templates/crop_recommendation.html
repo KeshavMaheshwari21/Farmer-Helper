@@ -9,129 +9,73 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
-    /* Center the form */
-    .form-container {
-      width: 100%;
-      max-width: 600px;
-      /* Adjust width */
-      padding: 2rem;
-      border-radius: 1rem;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      margin: 0 auto;
-      /* Centers horizontally */
-    }
+.form-container {
+  background-color: var(--secondary-bg);
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  max-width: 500px;
+  margin: auto;
+}
 
-    /* Center the form inside its parent */
-    div[style="display: flex;"] {
-      justify-content: center;
-    }
-
-    /* Style form inputs */
-    .form-group {
-      margin-bottom: 1.5rem;
-    }
-
-    .form-group label {
-      font-weight: bold;
-    }
-
-    .form-group input {
-      width: 100%;
-      padding: 0.75rem;
-      border: 1px solid #ccc;
-      border-radius: 0.5rem;
-      font-size: 1rem;
-    }
-
-    /* Style buttons */
-    .form-group .btn-primary,
-    .form-group input[type="submit"] {
-      display: inline-block;
-      padding: 0.75rem 1.5rem;
-      font-size: 1rem;
-      font-weight: bold;
-      text-align: center;
-      border-radius: 0.5rem;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-
-    .btn-primary {
-      background-color: #ff4d4d;
-      /* Red for back button */
-      color: white;
-      text-decoration: none;
-      border: none;
-    }
-
-    .btn-primary:hover {
-      background-color: #cc0000;
-    }
-
-    input[type="submit"] {
-      background-color: #28a745;
-      /* Green for submit */
-      color: white;
-      border: none;
-    }
-
-    input[type="submit"]:hover {
-      background-color: #1e7e34;
-    }
-
-    /* Make it responsive */
-    @media (max-width: 768px) {
-      .form-container {
-        width: 90%;
-        padding: 1.5rem;
-      }
-    }
-
-
-    .hero-image img {
-      width: 100%;
-      max-width: 600px;
-      border-radius: 10px;
-      transition: transform 0.5s ease, box-shadow 0.5s ease;
-    }
-
-    .hero-image img:hover {
-      transform: rotate(5deg) scale(1.1);
-      box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
-    }
-    /* Style submit button */
-input[type="submit"],
-button[type="submit"] {
-  width: 100%;
-  padding: 0.75rem;
-  font-size: 1rem;
+.form-container h2 {
+  font-size: 1.8rem;
   font-weight: bold;
+  color: var(--text-color);
   text-align: center;
-  border: none;
-  border-radius: 0.5rem;
-  background-color: #28a745; /* Green color */
+  margin-bottom: 1.5rem;
+}
+
+/* Grid layout for form inputs */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  align-items: center;
+}
+
+.form-group label {
+  display: block;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-color);
+  margin-bottom: 0.5rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+  border-color: var(--primary-color);
+}
+
+/* Styling for Submit Button */
+#submit-btn {
+  width: 100%;
+  background-color: var(--primary-color);
   color: white;
+  padding: 1rem;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
+  transition: background 0.3s ease;
+  border: none;
 }
 
-/* Hover effect */
-input[type="submit"]:hover,
-button[type="submit"]:hover {
-  background-color: #1e7e34;
-  transform: scale(1.05);
+#submit-btn:hover {
+  background-color: var(--primary-dark);
 }
-
-/* Ensure button looks good on small screens */
-@media (max-width: 768px) {
-  input[type="submit"],
-  button[type="submit"] {
-    font-size: 0.9rem;
-    padding: 0.65rem;
-  }
-}
-
-  </style>
+</style>
 </head>
 
 <body class="light">
@@ -166,22 +110,22 @@ button[type="submit"]:hover {
       </div>
     </section>
 
-    <div style="display: flex;">
-      <div class="form-container">
-        <h2 style="text-align: center;margin-bottom: 20px;" data-en="Enter Soil Parameters" data-hi="मृदा पैरामीटर दर्ज करें
-        ">Enter Soil Parameters</h2>
-        <form action="{{ url_for('submit') }}" method="post">
+    <div class="form-container">
+      <h2 style="text-align: center; margin-bottom: 20px;" data-en="Enter Soil Parameters" data-hi="मृदा पैरामीटर दर्ज करें">
+        Enter Soil Parameters
+      </h2>
+      <form action="{{ url_for('submit') }}" method="post">
+        <div class="form-grid">
           <div class="form-group">
             <label for="n" data-en="Nitrogen:" data-hi="नाइट्रोजन:">Nitrogen:</label>
             <input type="text" id="n" name="n" required>
           </div>
           <div class="form-group">
-            <label for="p" data-en="Phosphorus:" data-hi="फास्फोरस">Phosphorus:</label>
+            <label for="p" data-en="Phosphorus:" data-hi="फास्फोरस:">Phosphorus:</label>
             <input type="text" id="p" name="p" required>
           </div>
           <div class="form-group">
-            <label for="k" data-en="Potassium:" data-hi="पोटैशियम:
-                    ">Potassium:</label>
+            <label for="k" data-en="Potassium:" data-hi="पोटैशियम:">Potassium:</label>
             <input type="text" id="k" name="k" required>
           </div>
           <div class="form-group">
@@ -197,15 +141,16 @@ button[type="submit"]:hover {
             <input type="text" id="ph" name="ph" required>
           </div>
           <div class="form-group">
-            <label for="rainfall" data-en="Rainfall:" data-hi="
-            वर्षा:">Rainfall:</label>
+            <label for="rainfall" data-en="Rainfall:" data-hi="वर्षा:">Rainfall:</label>
             <input type="text" id="rainfall" name="rainfall" required>
           </div>
-          <div class="form-group">
-            <button type="submit" id="submit-btn" value="Submit" data-en="Submit" data-hi="सबमिट करें">Submit</button>
+          <div class="form-group full-width">
+            <button type="submit" id="submit-btn" value="Submit" data-en="Submit" data-hi="सबमिट करें" style="margin-top: 20px;">Submit</button>
           </div>
-        </form>
-      </div>
+        </div>
+      </form>
+    </div>
+    
   </main>
 
   <footer>
