@@ -9,69 +9,81 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        .form-section {
-            max-width: 500px;
+        /* General container styling */
+        .container {
+            width: 50%;
             margin: auto;
             padding: 20px;
+            /* height: 300px; */
+            background-color: var(--secondary-bg);
             border-radius: 10px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .form-section h2 {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             text-align: center;
-            margin-bottom: 20px;
         }
 
-        form {
-            display: flex;
-            flex-direction: column;
+        /* Form section */
+        .form-section {
+            padding: 20px;
+            background-color: var(--secondary-bg);
+            border-radius: 10px;
+            /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
+        }
+
+        h2 {
+            font-size: 22px;
+            margin-bottom: 15px;
         }
 
         label {
-            margin-top: 10px;
-            font-weight: bold;
+            font-size: 16px;
+            display: block;
+            margin-bottom: 8px;
         }
 
         select {
+            background-color: var(--secondary-bg);
+            color: var(--text-color);
+            width: 100%;
             padding: 8px;
+            font-size: 16px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            font-size: 14px;
+            outline: none;
         }
 
-        /* Centered and larger result */
-        .result-container {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        #result {
-            display: none;
-            font-size: 24px;
-            font-weight: bold;
-            color: #d35400;
-            background: #fef5e7;
-            padding: 10px;
-            border-radius: 8px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-            width: fit-content;
-            margin: auto;
-        }
-
-        .form-section button[type="submit"] {
-            margin-top: 20px;
-            padding: 10px;
-            background: #28a745;
-            color: white;
+        .button-submit {
+            margin-top: 15px;
+            padding: 10px 20px;
             font-size: 16px;
+            color: #fff;
+            background-color: #28a745;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            transition: background 0.3s;
         }
 
-        .form-section button[type="submit"]:hover {
-            background: #218838;
+        .button-submit:hover {
+            background-color: #218838;
         }
+
+        /* Loader styling */
+        #loader img {
+            width: 50px;
+        }
+
+        /* Result section */
+        .result-container {
+            padding: 15px;
+            background-color: var(--secondary-bg);
+            border-radius: 10px;
+            /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
+        }
+
+        #result {
+            font-size: 20px;
+        }
+
 
         .hero-image img {
             width: 100%;
@@ -137,14 +149,14 @@
                     </select>
 
 
-                    <button type="submit" data-en="Submit" data-hi="सबमिट करे">Submit</button>
+                    <button class="button-submit" type="submit" data-en="Submit" data-hi="सबमिट करे">Submit</button>
                 </form>
-                
+
             </div>
-            <div id="loader" style="display: none; text-align: center; margin-top: 10px;">
+            <div id="loader" style="display: none; text-align: center; margin-top: 40px;">
                 <img src="https://i.gifer.com/ZKZg.gif" alt="Loading..." width="50">
-            </div>            
-            <div class="result-container" style="margin-top: 20px;margin-bottom: 20px;text-align: left;">
+            </div>
+            <div class="result-container" style="text-align: left;">
                 <div id="result"></div>
             </div>
         </div>
@@ -212,45 +224,45 @@
 
             // Handle form submission
             $(document).ready(function () {
-    $("#predictionForm").submit(function (event) {
-        event.preventDefault();
+                $("#predictionForm").submit(function (event) {
+                    event.preventDefault();
 
-        let pestName = $("#pest_name").val(); // Get input value
-        $("#loader").show(); // Show loader animation
-        $("#result").hide(); // Hide previous results
+                    let pestName = $("#pest_name").val(); // Get input value
+                    $("#loader").show(); // Show loader animation
+                    $("#result").hide(); // Hide previous results
 
-        $.ajax({
-            url: "/pesticide_suggestion_output",
-            type: "POST",
-            contentType: "application/json",
-            data: JSON.stringify({ "pest_name": pestName }),
-            success: function (response) {
-                setTimeout(function () {
-                    $("#loader").hide(); // Hide loader after 2s
+                    $.ajax({
+                        url: "/pesticide_suggestion_output",
+                        type: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify({ "pest_name": pestName }),
+                        success: function (response) {
+                            setTimeout(function () {
+                                $("#loader").hide(); // Hide loader after 2s
 
-                    // Add header
-                    let resultText = `<strong>🛡️ Suggested Pesticides for ${pestName}</strong><br><br>`;
+                                // Add header
+                                let resultText = `<strong>🛡️ Suggested Pesticides for ${pestName}</strong><br><br>`;
 
-                    // Ensure pesticides are properly formatted as a list
-                    if (response.Pesticides) {
-                        let pesticidesArray = response.Pesticides.split(", "); // Split by comma
-                        pesticidesArray.forEach(function (pesticide) {
-                            resultText += `🔹 ${pesticide}<br>`; // Add bullets and new lines
-                        });
-                    } else {
-                        resultText += "No pesticides found.";
-                    }
+                                // Ensure pesticides are properly formatted as a list
+                                if (response.Pesticides) {
+                                    let pesticidesArray = response.Pesticides.split(", "); // Split by comma
+                                    pesticidesArray.forEach(function (pesticide) {
+                                        resultText += `🔹 ${pesticide}<br>`; // Add bullets and new lines
+                                    });
+                                } else {
+                                    resultText += "No pesticides found.";
+                                }
 
-                    $("#result").html(resultText).fadeIn(); // Update and show results
-                }, 2000); // 2s delay
-            },
-            error: function (xhr, status, error) {
-                $("#loader").hide(); // Hide loader on error
-                $("#result").html("❌ Error: " + xhr.responseJSON.error).fadeIn();
-            }
-        });
-    });
-});
+                                $("#result").html(resultText).fadeIn(); // Update and show results
+                            }, 2000); // 2s delay
+                        },
+                        error: function (xhr, status, error) {
+                            $("#loader").hide(); // Hide loader on error
+                            $("#result").html("❌ Error: " + xhr.responseJSON.error).fadeIn();
+                        }
+                    });
+                });
+            });
 
 
         });
